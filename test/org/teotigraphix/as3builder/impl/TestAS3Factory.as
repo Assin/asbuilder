@@ -111,6 +111,83 @@ public class TestAS3Factory
 			testFile.compilationNode);
 	}
 	
+	[Test]
+	/*
+	* package {
+	*     /~~
+	*      ~ A class comment. 
+	*      ~/
+	*     public class Test {
+	*         
+	*     }
+	* }
+	*/
+	public function testBasicCommentClass():void
+	{
+		var testFile:ISourceFile = project.newClass("Test");
+		var classType:IClassTypeNode = testFile.compilationNode.typeNode as IClassTypeNode;
+		classType.description = "A class comment.";
+		
+		assertBuild("package {\n    /**\n     * A class comment. \n     */\n    public class Test {\n        \n    }\n}", 
+			testFile.compilationNode);
+	}
+	
+	[Test]
+	/*
+	 * package {
+	 *     /~~
+	 *      ~ A class comment.
+	 *      ~ 
+	 *      ~ <p>Long description documentation.</p> 
+	 *      ~/
+	 *     public class Test {
+	 *         
+	 *     }
+	 * }
+	 */
+	public function testShortLongCommentClass():void
+	{
+		var testFile:ISourceFile = project.newClass("Test");
+		var classType:IClassTypeNode = testFile.compilationNode.typeNode as IClassTypeNode;
+		classType.description = "A class comment.\n <p>Long description documentation.</p>";
+		
+		assertBuild("package {\n    /**\n     * A class comment.\n     * \n     * <p>Long description " +
+			"documentation.</p> \n     */\n    public class Test {\n        \n    }\n}", 
+			testFile.compilationNode);
+	}
+	
+	[Test]
+	/*
+	 * package {
+	 *     /~~
+	 *      ~ A class comment.
+	 *      ~ 
+	 *      ~ <p>Long description documentation.</p> 
+	 *      ~ 
+	 *      ~ @author Jane Doe
+	 *      ~ @author John Doe
+	 *      ~/
+	 *     public class Test {
+	 *         
+	 *     }
+	 * }
+	 */
+	public function testShortLongDocTagsCommentClass():void
+	{
+		var testFile:ISourceFile = project.newClass("Test");
+		var classType:IClassTypeNode = testFile.compilationNode.typeNode as IClassTypeNode;
+		classType.description = "A class comment.\n <p>Long description documentation.</p>";
+		
+		classType.comment.addDocTag("author", "Jane Doe");
+		classType.comment.addDocTag("author", "John Doe");
+		
+		assertBuild("package {\n    /**\n     * A class comment.\n     * \n     * " +
+			"<p>Long description documentation.</p> \n     * \n     * " +
+			"@author Jane Doe\n     * @author John Doe\n     */\n    " +
+			"public class Test {\n        \n    }\n}", 
+			testFile.compilationNode);
+	}
+	
 	/*
 	* package {
 	*     public dynamic class Test {

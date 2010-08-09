@@ -1,8 +1,8 @@
 package org.teotigraphix.as3builder.impl
 {
 
-import org.teotigraphix.as3nodes.api.IParameterNode;
 import org.teotigraphix.as3parser.api.AS3NodeKind;
+import org.teotigraphix.as3parser.api.ASDocNodeKind;
 import org.teotigraphix.as3parser.api.IParserNode;
 import org.teotigraphix.as3parser.api.KeyWords;
 import org.teotigraphix.as3parser.api.Operators;
@@ -158,8 +158,80 @@ public class BuilderFactory
 		build(node, tokens);
 	}
 	
+	private function buildAsDoc(node:IParserNode, tokens:Vector.<Token>):void
+	{
+		var asdoc:IParserNode = ASTUtil.getNode(AS3NodeKind.AS_DOC, node);
+		if (!asdoc)
+			return;
+		
+		//var ast:IParserNode = ParserFactory.instance.asdocParser.
+		//	buildAst(Vector.<String>(asdoc.stringValue.split("\n")), "internal");
+		
+		var ast:IParserNode = asdoc.getLastChild();
+		
+		var element:IParserNode;
+		var content:IParserNode = ast.getChild(0);
+		var shortList:IParserNode = ASTUtil.getNode(ASDocNodeKind.SHORT_LIST, content);
+		var longList:IParserNode = ASTUtil.getNode(ASDocNodeKind.LONG_LIST, content);
+		var doctagList:IParserNode = ASTUtil.getNode(ASDocNodeKind.DOCTAG_LIST, content);
+		
+		addToken(tokens, newToken("/**"));
+		addToken(tokens, newNewLine());
+		// do short-list
+		if (shortList)
+		{
+			addToken(tokens, newToken(" * "));
+			for each (element in shortList.children)
+			{
+				addToken(tokens, newToken(element.stringValue));
+			}
+			addToken(tokens, newNewLine());
+		}
+		// do long-list
+		if (longList)
+		{
+			addToken(tokens, newToken(" * "));
+			addToken(tokens, newNewLine());
+			addToken(tokens, newToken(" * "));
+			for each (element in longList.children)
+			{
+				addToken(tokens, newToken(element.stringValue));
+			}
+			addToken(tokens, newNewLine());
+		}
+		// do doctag-list
+		if (doctagList)
+		{
+			addToken(tokens, newToken(" * "));
+			addToken(tokens, newNewLine());
+			addToken(tokens, newToken(" * "));
+			var len:int = doctagList.numChildren;
+			for (var i:int = 0; i < len; i++)
+			{
+				element = doctagList.children[i] as IParserNode;
+				
+				var name:IParserNode = element.getChild(0);
+				addToken(tokens, newToken("@"));
+				addToken(tokens, newToken(name.stringValue));
+				addToken(tokens, newToken(" "));
+				if (element.numChildren > 1)
+				{
+					var body:IParserNode = element.getChild(1);
+					addToken(tokens, newToken(body.getLastChild().stringValue));
+				}
+				addToken(tokens, newNewLine());
+				if (i < len - 1)
+					addToken(tokens, newToken(" * "));
+			}
+		}
+		addToken(tokens, newToken(" */"));
+		addToken(tokens, newNewLine());
+	}
+	
 	private function buildClass(node:IParserNode, tokens:Vector.<Token>):void
 	{
+		// as-doc
+		buildAsDoc(node, tokens);
 		// modifiers
 		buildModifiers(node, tokens);
 		// class
@@ -332,7 +404,7 @@ public class BuilderFactory
 				//lastToken = newPackage();
 				//break;
 				return null;
-			
+				
 			case AS3NodeKind.CONTENT:
 			{
 				lastToken = newLeftCurlyBracket();

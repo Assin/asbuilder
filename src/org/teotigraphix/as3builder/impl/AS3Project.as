@@ -28,6 +28,7 @@ import org.teotigraphix.as3nodes.api.Modifier;
 import org.teotigraphix.as3nodes.impl.AS3SourceFile;
 import org.teotigraphix.as3nodes.impl.CompilationNode;
 import org.teotigraphix.as3nodes.impl.IdentifierNode;
+import org.teotigraphix.as3nodes.impl.NodeFactory;
 import org.teotigraphix.as3nodes.utils.ASTNodeUtil;
 import org.teotigraphix.as3parser.core.Node;
 import org.teotigraphix.as3parser.core.SourceCode;
@@ -243,6 +244,10 @@ public class AS3Project implements IAS3Project
 		// The TypeNode in the PackageNode has to be created
 		var compilationNode:ICompilationNode = new CompilationNode(compilationUnitNode, file);
 		AS3SourceFile(file).compilationNode = compilationNode;
+		
+		// add empty comment
+		compilationNode.typeNode.comment = NodeFactory.instance.
+			createCommentNode(null, compilationNode.typeNode);
 		
 		// add public modifier
 		compilationNode.typeNode.addModifier(Modifier.PUBLIC);
