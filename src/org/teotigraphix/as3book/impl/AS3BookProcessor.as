@@ -277,7 +277,7 @@ public class AS3BookProcessor implements IAS3BookProcessor
 	{
 		resolveQNameFromImports(
 			IPackageNode(type.parent).imports, 
-			type.superType, 
+			type.superClass, 
 			IPackageNode(type.parent).uid);
 	}
 	
@@ -300,7 +300,7 @@ public class AS3BookProcessor implements IAS3BookProcessor
 	 */
 	private function proccessSuperInterfacesImport(type:IInterfaceTypeNode):void
 	{
-		for each (var siname:IIdentifierNode in type.superTypeList)
+		for each (var siname:IIdentifierNode in type.superInterfaces)
 		{
 			resolveQNameFromImports(
 				IPackageNode(type.parent).imports, 
@@ -318,7 +318,7 @@ public class AS3BookProcessor implements IAS3BookProcessor
 		{
 			_book.superclasses.put(type.toLink(), cacheSuperClasses(type));
 			
-			var superType:ITypeNode = getType(IClassTypeNode(type).superType);
+			var superType:ITypeNode = getType(IClassTypeNode(type).superClass);
 			if (superType != null)
 			{
 				var list:Vector.<ITypeNode> = _book.subclasses.getValue(superType.toLink());
@@ -403,10 +403,10 @@ public class AS3BookProcessor implements IAS3BookProcessor
 		if (element is ITypeNodePlaceholder)
 			return result;
 		
-		if (IClassTypeNode(element).superType == null)
+		if (IClassTypeNode(element).superClass == null)
 			return result;
 		
-		var selement:ITypeNode = getType(IClassTypeNode(element).superType);
+		var selement:ITypeNode = getType(IClassTypeNode(element).superClass);
 		if (selement != null)
 		{
 			if (selement != null)
@@ -436,7 +436,7 @@ public class AS3BookProcessor implements IAS3BookProcessor
 										   result:Vector.<ITypeNode>):Vector.<ITypeNode>
 	{
 		var superTypes:Vector.<ITypeNode> = getTypesFromQNames(
-			IInterfaceTypeNode(element).superTypeList);
+			IInterfaceTypeNode(element).superInterfaces);
 		
 		for each (var superType:ITypeNode in superTypes)
 		{
