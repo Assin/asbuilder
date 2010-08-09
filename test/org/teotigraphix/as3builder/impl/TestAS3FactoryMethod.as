@@ -9,6 +9,7 @@ import org.teotigraphix.as3nodes.api.IAS3Project;
 import org.teotigraphix.as3nodes.api.ICompilationNode;
 import org.teotigraphix.as3nodes.api.IIdentifierNode;
 import org.teotigraphix.as3nodes.api.IMethodNode;
+import org.teotigraphix.as3nodes.api.IParameterNode;
 import org.teotigraphix.as3nodes.api.ISourceFile;
 import org.teotigraphix.as3nodes.api.ITypeNode;
 import org.teotigraphix.as3nodes.api.Modifier;
@@ -48,6 +49,144 @@ public class TestAS3FactoryMethod
 		
 		assertBuild("package {\n    public class Test {\n        public function " +
 			"testMethod():String {\n        }\n    }\n}", 
+			testClassFile.compilationNode);
+	}
+	
+	[Test]
+	/*
+	 * package {
+	 *     public class Test {
+	 *         /~~
+	 *          ~ A test method. 
+	 *          ~/
+	 *         public function testMethod():String {
+	 *         }
+	 *     }
+	 * }
+	 */
+	public function testBasicClassMethodWithComment():void
+	{
+		var testClassFile:ISourceFile = project.newClass("Test");
+		var typeNode:ITypeNode = testClassFile.compilationNode.typeNode;
+		
+		var method:IMethodNode = typeNode.newMethod(
+			"testMethod", Modifier.PUBLIC, IdentifierNode.createType("String"));
+		method.description = "A test method.";
+		
+		assertBuild("package {\n    public class Test {\n        /**\n         * " +
+			"A test method. \n         */\n        public function " +
+			"testMethod():String {\n        }\n    }\n}", 
+			testClassFile.compilationNode);
+	}
+	
+	
+	[Test]
+	/*
+	 * package {
+	 *     public class Test {
+	 *         /~~
+	 *          ~ A test method.
+	 *          ~ 
+	 *          ~ <p>Long description.</p> 
+	 *          ~ 
+	 *          ~ @since 1.0
+	 *          ~ @return A String indicating success
+	 *          ~/
+	 *         public function testMethod():String {
+	 *         }
+	 *     }
+	 * }
+	*/
+	public function testBasicClassMethodWithCommentAndDocTags():void
+	{
+		var testClassFile:ISourceFile = project.newClass("Test");
+		var typeNode:ITypeNode = testClassFile.compilationNode.typeNode;
+		
+		var method:IMethodNode = typeNode.newMethod(
+			"testMethod", Modifier.PUBLIC, IdentifierNode.createType("String"));
+		method.description = "A test method.\n <p>Long description.</p>";
+		method.addDocTag("since", "1.0");
+		method.addReturnDescription("A String indicating success.");
+		
+		assertBuild("package {\n    public class Test {\n        /**\n         " +
+			"* A test method.\n         * \n         * <p>Long description.</p> " +
+			"\n         * \n         * @since 1.0\n         * @return A String " +
+			"indicating success.\n         */\n        public function " +
+			"testMethod():String {\n        }\n    }\n}", 
+			testClassFile.compilationNode);
+	}
+	
+	[Test]
+	/*
+	 * package {
+	 *     public class Test {
+	 *         /~~
+	 *          ~ @param arg0 An argument at 0
+	 *          ~ @return A String indicating success.
+	 *          ~/
+	 *         public function testMethod(arg0:String):String {
+	 *         }
+	 *     }
+	 * }
+	 */
+	public function testBasicClassMethodWithParamTags():void
+	{
+		var testClassFile:ISourceFile = project.newClass("Test");
+		var typeNode:ITypeNode = testClassFile.compilationNode.typeNode;
+		
+		var method:IMethodNode = typeNode.newMethod(
+			"testMethod", Modifier.PUBLIC, IdentifierNode.createType("String"));
+		var param:IParameterNode = method.addParameter("arg0", IdentifierNode.createType("String"));
+		//method.description = "A test method.\n <p>Long description.</p>";
+		//method.addDocTag("since", "1.0");
+		param.description = "An argument at 0";
+		method.addReturnDescription("A String indicating success.");
+		
+		assertBuild("package {\n    public class Test {\n        /**\n         " +
+			"* @param arg0 An argument at 0\n         * @return " +
+			"A String indicating success.\n         */\n       " +
+			" public function testMethod(arg0:String):String {\n        }\n    }\n}", 
+			testClassFile.compilationNode);
+	}
+	
+	[Test]
+	/**
+	 * 
+	 * package {
+	 *     public class Test {
+	 *         /~~
+	 *          ~ A test method.
+	 *          ~ 
+	 *          ~ <p>Long description.</p> 
+	 *          ~ 
+	 *          ~ @since 1.0
+	 *          ~ @param arg0 An argument at 0
+	 *          ~ @return A String indicating success.
+	 *          ~/
+	 *         public function testMethod(arg0:String):String {
+	 *         }
+	 *     }
+	 * }
+	*/
+	public function testBasicClassMethodWithDescParamReturnTags():void
+	{
+		var testClassFile:ISourceFile = project.newClass("Test");
+		var typeNode:ITypeNode = testClassFile.compilationNode.typeNode;
+		
+		var method:IMethodNode = typeNode.newMethod(
+			"testMethod", Modifier.PUBLIC, IdentifierNode.createType("String"));
+		var param:IParameterNode = method.addParameter("arg0", IdentifierNode.createType("String"));
+		method.description = "A test method.\n <p>Long description.</p>";
+		method.addDocTag("since", "1.0");
+		param.description = "An argument at 0";
+		method.addReturnDescription("A String indicating success.");
+		
+		assertBuild("package {\n    public class Test {\n        /**\n         " +
+			"* A test method.\n         * \n         * " +
+			"<p>Long description.</p> \n         * \n         * @since 1.0\n " +
+			"        * @param arg0 An argument at 0\n         * @return A " +
+			"String indicating success.\n         */\n        public function " +
+			"testMethod(arg0:String):String {\n        }\n    }\n}", 
 			testClassFile.compilationNode);
 	}
 	
@@ -162,9 +301,9 @@ public class TestAS3FactoryMethod
 		var testClassFile:ISourceFile = project.newClass("Test");
 		var typeNode:ITypeNode = testClassFile.compilationNode.typeNode;
 		
-		var method1:IMethodNode = typeNode.newMethod(
+		var method:IMethodNode = typeNode.newMethod(
 			"testMethod", Modifier.PUBLIC, IdentifierNode.createType("String"));
-		method1.addParameter("arg0", IdentifierNode.createType("String"));
+		var param:IParameterNode = method.addParameter("arg0", IdentifierNode.createType("String"));
 		
 		assertBuild("package {\n    public class Test {\n        public function " +
 			"testMethod(arg0:String):String {\n        }\n    }\n}", 

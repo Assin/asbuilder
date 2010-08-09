@@ -203,7 +203,7 @@ public class BuilderFactory
 					tokens.push(newToken("..."));
 					tokens.push(newToken(rest.stringValue));
 				}
-
+				
 				if (i < len - 1)
 				{
 					tokens.push(newToken(","));
@@ -261,7 +261,7 @@ public class BuilderFactory
 		addToken(tokens, newToken("/**"));
 		addToken(tokens, newNewLine());
 		// do short-list
-		if (shortList)
+		if (shortList && shortList.numChildren > 0)
 		{
 			addToken(tokens, newToken(" * "));
 			for each (element in shortList.children)
@@ -271,7 +271,7 @@ public class BuilderFactory
 			addToken(tokens, newNewLine());
 		}
 		// do long-list
-		if (longList)
+		if (longList && longList.numChildren > 0)
 		{
 			addToken(tokens, newToken(" * "));
 			addToken(tokens, newNewLine());
@@ -283,10 +283,14 @@ public class BuilderFactory
 			addToken(tokens, newNewLine());
 		}
 		// do doctag-list
-		if (doctagList)
+		if (doctagList && doctagList.numChildren > 0)
 		{
-			addToken(tokens, newToken(" * "));
-			addToken(tokens, newNewLine());
+			if(shortList && shortList.numChildren > 0)
+			{
+				addToken(tokens, newToken(" * "));
+				addToken(tokens, newNewLine());
+			}
+			
 			addToken(tokens, newToken(" * "));
 			var len:int = doctagList.numChildren;
 			for (var i:int = 0; i < len; i++)
