@@ -103,10 +103,13 @@ public class BuilderFactory
 			addToken(tokens, buildContainerAfterStartNewline(ast));
 		}
 		
-		if (ast.numChildren > 0)
+		var len:int = ast.numChildren;
+		if (len > 0)
 		{
-			for each (var node:IParserNode in ast.children)
+			for (var i:int = 0; i < len; i++)
 			{
+				var node:IParserNode = ast.children[i] as IParserNode;
+				
 				if (node.isKind(AS3NodeKind.PACKAGE))
 				{
 					buildPackage(node, tokens);
@@ -118,6 +121,12 @@ public class BuilderFactory
 				else if (node.isKind(AS3NodeKind.INTERFACE))
 				{
 					buildInterface(node, tokens);
+				}
+				else if (node.isKind(AS3NodeKind.FUNCTION))
+				{
+					buildFunction(node, tokens);
+					if (i < len - 1)
+						addToken(tokens, newNewLine());
 				}
 				else
 				{
@@ -140,6 +149,80 @@ public class BuilderFactory
 		}
 		
 		return tokens;
+	}
+	
+	/**
+	 * node is (function)
+	 */
+	private function buildFunction(node:IParserNode, tokens:Vector.<Token>):void
+	{
+		// as-doc
+		buildAsDoc(node, tokens);
+		// modifiers
+		buildModifiers(node, tokens);
+		// function
+		tokens.push(newToken(KeyWords.FUNCTION));
+		tokens.push(newSpace());
+		// name
+		var name:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME, node);
+		tokens.push(newToken(name.stringValue));
+		// parameters
+		tokens.push(newToken("("));
+		var parameterList:IParserNode = ASTUtil.getNode(AS3NodeKind.PARAMETER_LIST, node);
+		if (parameterList)
+		{
+			var len:int = parameterList.numChildren;
+			for (var i:int = 0; i < len; i++)
+			{
+				var param:IParserNode = parameterList.children[i] as IParserNode;
+				var nti:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME_TYPE_INIT, param);
+				var rest:IParserNode = ASTUtil.getNode(AS3NodeKind.REST, param);
+				if (nti)
+				{
+					var nameNode:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME, nti);
+					var typeNode:IParserNode = ASTUtil.getNode(AS3NodeKind.TYPE, nti);
+					var initNode:IParserNode = ASTUtil.getNode(AS3NodeKind.INIT, nti);
+					if (nameNode)
+					{
+						tokens.push(newToken(nameNode.stringValue));
+					}
+					if (typeNode)
+					{
+						tokens.push(newToken(":"));
+						tokens.push(newToken(typeNode.stringValue));
+					}
+					if (initNode)
+					{
+						tokens.push(newToken("="));
+						tokens.push(newToken("TOTO IMPLEMENT INIT"));
+						//tokens.push(newToken(initNode.stringValue));
+					}
+				}
+				else if (rest)
+				{
+					tokens.push(newToken("..."));
+					tokens.push(newToken(rest.stringValue));
+				}
+
+				if (i < len - 1)
+				{
+					tokens.push(newToken(","));
+					tokens.push(newSpace());
+				}
+			}
+		}
+		tokens.push(newToken(")"));
+		// returnType
+		var returnType:IParserNode = ASTUtil.getNode(AS3NodeKind.TYPE, node);
+		if (returnType)
+		{
+			tokens.push(newToken(":"));
+			tokens.push(newToken(returnType.stringValue));
+		}
+		tokens.push(newSpace());
+		// block
+		var block:IParserNode = ASTUtil.getNode(AS3NodeKind.BLOCK, node);
+		build(block, tokens);
 	}
 	
 	private function buildPackage(node:IParserNode, tokens:Vector.<Token>):void
@@ -357,6 +440,12 @@ public class BuilderFactory
 				lastToken = newNewLine();
 				break;
 			
+			case AS3NodeKind.BLOCK:
+				
+				indent--;
+				lastToken = newNewLine();
+				break;
+			
 			default:
 				return null;
 		}
@@ -412,6 +501,13 @@ public class BuilderFactory
 				break;
 			}
 				
+			case AS3NodeKind.BLOCK:
+			{
+				lastToken = newLeftCurlyBracket();
+				indent++;
+				break;
+			}
+				
 			default:
 				return null;
 		}
@@ -455,6 +551,12 @@ public class BuilderFactory
 				return null;
 				
 			case AS3NodeKind.CONTENT:
+			{
+				lastToken = newRightCurlyBracket();
+				break;
+			}
+				
+			case AS3NodeKind.BLOCK:
 			{
 				lastToken = newRightCurlyBracket();
 				break;
@@ -556,15 +658,6 @@ public class BuilderFactory
 	public function newNewLine():Token
 	{
 		return newToken("\n");
-	}
-	
-	
-	protected function buildPackageNodeFooter():Vector.<Token>
-	{
-		var tokens:Vector.<Token> = new Vector.<Token>();
-		tokens.push(newNewLine());
-		tokens.push(newRightCurlyBracket());
-		return tokens;
 	}
 	
 	[Test]
