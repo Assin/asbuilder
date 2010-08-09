@@ -107,7 +107,11 @@ public class BuilderFactory
 		{
 			for each (var node:IParserNode in ast.children)
 			{
-				if (node.isKind(AS3NodeKind.CLASS))
+				if (node.isKind(AS3NodeKind.PACKAGE))
+				{
+					buildPackage(node, tokens);
+				}
+				else if (node.isKind(AS3NodeKind.CLASS))
 				{
 					buildClass(node, tokens);
 				}
@@ -124,7 +128,7 @@ public class BuilderFactory
 			addToken(tokens, buildContainerEnd(ast));
 		}
 		
-		if (ast.numChildren == 0)
+		if (ast.numChildren == 0 && state != AS3NodeKind.PACKAGE)
 		{
 			addToken(tokens, buildStartSpace(ast));
 			addToken(tokens, buildNode(ast));
@@ -132,6 +136,22 @@ public class BuilderFactory
 		}
 		
 		return tokens;
+	}
+	
+	private function buildPackage(node:IParserNode, tokens:Vector.<Token>):void
+	{
+		// package
+		tokens.push(newPackage());
+		tokens.push(newSpace());
+		// name
+		var name:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME, node);
+		if (name.stringValue != null)
+		{
+			tokens.push(newToken(name.stringValue));
+		}
+		
+		// content
+		build(node, tokens);
 	}
 	
 	private function buildClass(node:IParserNode, tokens:Vector.<Token>):void
@@ -268,8 +288,9 @@ public class BuilderFactory
 		switch (container.kind)
 		{
 			case AS3NodeKind.PACKAGE:
-				lastToken = newPackage();
-				break;
+				//lastToken = newPackage();
+				//break;
+				return null;
 			
 			case AS3NodeKind.CONTENT:
 			{
