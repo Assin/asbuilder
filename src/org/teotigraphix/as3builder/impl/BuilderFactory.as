@@ -264,9 +264,9 @@ public class BuilderFactory
 	{
 		switch (node.kind)
 		{
-			case AS3NodeKind.CONTENT:
-				lastToken = newNewLine();
-				break;
+			//case AS3NodeKind.CONTENT:
+			//	lastToken = newNewLine();
+			//	break;
 			
 			default:
 				return null;
