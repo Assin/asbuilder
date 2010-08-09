@@ -8,6 +8,7 @@ import org.teotigraphix.as3nodes.api.IAS3Project;
 import org.teotigraphix.as3nodes.api.IClassTypeNode;
 import org.teotigraphix.as3nodes.api.ICompilationNode;
 import org.teotigraphix.as3nodes.api.IIdentifierNode;
+import org.teotigraphix.as3nodes.api.IInterfaceTypeNode;
 import org.teotigraphix.as3nodes.api.IMethodNode;
 import org.teotigraphix.as3nodes.api.ISourceFile;
 import org.teotigraphix.as3nodes.api.ITypeNode;
@@ -16,20 +17,43 @@ import org.teotigraphix.as3nodes.impl.IdentifierNode;
 
 public class TestAS3Factory
 {
+	protected var factory:AS3Factory;
+	
+	protected var project:IAS3Project;
+	
 	[Before]
 	public function setUp():void
 	{
+		var output:File = File.desktopDirectory.resolvePath("tempTest");
 		
+		factory = new AS3Factory();
+		project = factory.newASProject(output.nativePath);
 	}
 	
 	[Test]
-	public function testBasic():void
+	public function testBasicInterface():void
 	{
-		var temp:File = File.desktopDirectory.resolvePath("tempTest");
+		var testInterfaceFile:ISourceFile = project.newInterface("ITest");
 		
-		var factory:AS3Factory = new AS3Factory();
-		var project:IAS3Project = factory.newASProject(temp.nativePath);
+		assertBuild("package \n{\n    public interface ITest \n    {\n        \n    }\n}", 
+			testInterfaceFile.compilationNode);
+	}
+	
+	[Test]
+	public function testBasicInterfaceExtends():void
+	{
+		var testInterfaceFile:ISourceFile = project.newInterface("ITest");
+		var type:IInterfaceTypeNode = testInterfaceFile.compilationNode.typeNode as IInterfaceTypeNode;
+		type.addSuperInterface(IdentifierNode.createType("IA"));
+		type.addSuperInterface(IdentifierNode.createType("IB"));
 		
+		assertBuild("package \n{\n    public interface ITest extends IA, IB \n    {\n        \n    }\n}", 
+			testInterfaceFile.compilationNode);
+	}
+	
+	[Test]
+	public function testBasicClass():void
+	{
 		var testFile:ISourceFile = project.newClass("Test");
 		
 		Assert.assertEquals("Test", testFile.name);
@@ -52,13 +76,8 @@ public class TestAS3Factory
 	}
 	
 	[Test]
-	public function testBasicExtends():void
+	public function testBasicClassExtends():void
 	{
-		var temp:File = File.desktopDirectory.resolvePath("tempTest");
-		
-		var factory:AS3Factory = new AS3Factory();
-		var project:IAS3Project = factory.newASProject(temp.nativePath);
-		
 		var testFile:ISourceFile = project.newClass("Test");
 		var type:IClassTypeNode = testFile.compilationNode.typeNode as IClassTypeNode;
 		type.superClass = IdentifierNode.createType("A");
@@ -69,13 +88,8 @@ public class TestAS3Factory
 	
 	
 	[Test]
-	public function testBasicExtendsImplements():void
+	public function testBasicClassExtendsImplements():void
 	{
-		var temp:File = File.desktopDirectory.resolvePath("tempTest");
-		
-		var factory:AS3Factory = new AS3Factory();
-		var project:IAS3Project = factory.newASProject(temp.nativePath);
-		
 		var testFile:ISourceFile = project.newClass("Test");
 		var type:IClassTypeNode = testFile.compilationNode.typeNode as IClassTypeNode;
 		type.superClass = IdentifierNode.createType("A");

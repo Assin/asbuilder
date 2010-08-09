@@ -226,7 +226,28 @@ public class AS3Project implements IAS3Project
 	 */
 	public function newInterface(qualifiedName:String):ISourceFile
 	{
-		return null;
+		var uid:IIdentifierNode = IdentifierNode.createName(qualifiedName);
+		
+		var source:String = "";
+		var name:String = uid.localName + ".as";
+		var path:String = output + "/src";
+		
+		var code:SourceCode = new SourceCode(source, name, path);
+		// An .as SourceFile has to be returned
+		var file:AS3SourceFile = new AS3SourceFile(null, code);
+		
+		// The CompilationNode in the file has to be created
+		var compilationUnitNode:Node = ASTNodeUtil.createEmptyInterface(uid);
+		
+		// The PackageNode in the CompilationNode has to be created
+		// The TypeNode in the PackageNode has to be created
+		var compilationNode:ICompilationNode = new CompilationNode(compilationUnitNode, file);
+		AS3SourceFile(file).compilationNode = compilationNode;
+		
+		// add public modifier
+		compilationNode.typeNode.addModifier(Modifier.PUBLIC);
+		
+		return file;
 	}
 }
 }

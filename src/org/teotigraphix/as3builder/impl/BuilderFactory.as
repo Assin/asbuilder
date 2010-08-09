@@ -115,6 +115,10 @@ public class BuilderFactory
 				{
 					buildClass(node, tokens);
 				}
+				else if (node.isKind(AS3NodeKind.INTERFACE))
+				{
+					buildInterface(node, tokens);
+				}
 				else
 				{
 					tokens = build(node, tokens);
@@ -157,15 +161,7 @@ public class BuilderFactory
 	private function buildClass(node:IParserNode, tokens:Vector.<Token>):void
 	{
 		// modifiers
-		var mods:IParserNode = ASTUtil.getNode(AS3NodeKind.MOD_LIST, node);
-		if (mods)
-		{
-			for each (var mod:IParserNode in mods.children)
-			{
-				tokens.push(newToken(mod.stringValue));
-				tokens.push(newSpace());
-			}
-		}
+		buildModifiers(node, tokens);
 		// class
 		tokens.push(newClass());
 		tokens.push(newSpace());
@@ -203,6 +199,51 @@ public class BuilderFactory
 		build(content, tokens);
 	}
 	
+	private function buildInterface(node:IParserNode, tokens:Vector.<Token>):void
+	{
+		// modifiers
+		buildModifiers(node, tokens);
+		// interface
+		tokens.push(newInterface());
+		tokens.push(newSpace());
+		// name
+		var name:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME, node);
+		tokens.push(newToken(name.stringValue));
+		tokens.push(newSpace());
+		// extends
+		var extendz:Vector.<IParserNode> = ASTUtil.getNodes(AS3NodeKind.EXTENDS, node);
+		if (extendz && extendz.length > 0)
+		{
+			tokens.push(newToken(KeyWords.EXTENDS));
+			tokens.push(newSpace());
+			var len:int = extendz.length;
+			for (var i:int = 0; i < len; i++)
+			{
+				var extend:IParserNode = extendz[i] as IParserNode;
+				tokens.push(newToken(extend.stringValue));
+				if (i < len - 1)
+					tokens.push(newToken(","));
+				tokens.push(newSpace());
+			}
+		}
+		// content
+		var content:IParserNode = ASTUtil.getNode(AS3NodeKind.CONTENT, node);
+		build(content, tokens);
+	}
+	
+	
+	protected function buildModifiers(node:IParserNode, tokens:Vector.<Token>):void
+	{
+		var mods:IParserNode = ASTUtil.getNode(AS3NodeKind.MOD_LIST, node);
+		if (mods)
+		{
+			for each (var mod:IParserNode in mods.children)
+			{
+				tokens.push(newToken(mod.stringValue));
+				tokens.push(newSpace());
+			}
+		}
+	}
 	
 	protected function buildContainerAfterStartNewline(node:IParserNode):Token
 	{
@@ -395,6 +436,12 @@ public class BuilderFactory
 	public function newClass():Token
 	{
 		return newToken(KeyWords.CLASS);
+	}
+	
+	// interface
+	public function newInterface():Token
+	{
+		return newToken(KeyWords.INTERFACE);
 	}
 	
 	// {
