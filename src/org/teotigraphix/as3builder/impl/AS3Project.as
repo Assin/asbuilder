@@ -20,15 +20,15 @@
 package org.teotigraphix.as3builder.impl
 {
 
-import org.osmf.metadata.IIdentifier;
 import org.teotigraphix.as3nodes.api.IAS3Project;
+import org.teotigraphix.as3nodes.api.ICompilationNode;
 import org.teotigraphix.as3nodes.api.IIdentifierNode;
 import org.teotigraphix.as3nodes.api.ISourceFile;
+import org.teotigraphix.as3nodes.api.Modifier;
 import org.teotigraphix.as3nodes.impl.AS3SourceFile;
 import org.teotigraphix.as3nodes.impl.CompilationNode;
 import org.teotigraphix.as3nodes.impl.IdentifierNode;
 import org.teotigraphix.as3nodes.utils.ASTNodeUtil;
-import org.teotigraphix.as3parser.api.AS3NodeKind;
 import org.teotigraphix.as3parser.core.Node;
 import org.teotigraphix.as3parser.core.SourceCode;
 import org.teotigraphix.as3parser.utils.FileUtil;
@@ -212,7 +212,11 @@ public class AS3Project implements IAS3Project
 		
 		// The PackageNode in the CompilationNode has to be created
 		// The TypeNode in the PackageNode has to be created
-		AS3SourceFile(file).compilationNode = new CompilationNode(compilationUnitNode, file);
+		var compilationNode:ICompilationNode = new CompilationNode(compilationUnitNode, file);
+		AS3SourceFile(file).compilationNode = compilationNode;
+		
+		// add public modifier
+		compilationNode.typeNode.addModifier(Modifier.PUBLIC);
 		
 		return file;
 	}

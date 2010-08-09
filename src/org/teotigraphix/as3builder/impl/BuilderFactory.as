@@ -177,7 +177,7 @@ public class BuilderFactory
 		var extendz:IParserNode = ASTUtil.getNode(AS3NodeKind.EXTENDS, node);
 		if (extendz)
 		{
-			tokens.push(newToken("extends"));
+			tokens.push(newToken(KeyWords.EXTENDS));
 			tokens.push(newSpace());
 			tokens.push(newToken(extendz.stringValue));
 			tokens.push(newSpace());
@@ -186,7 +186,7 @@ public class BuilderFactory
 		var impls:IParserNode = ASTUtil.getNode(AS3NodeKind.IMPLEMENTS_LIST, node);
 		if (impls)
 		{
-			tokens.push(newToken("implements"));
+			tokens.push(newToken(KeyWords.IMPLEMENTS));
 			tokens.push(newSpace());
 			var len:int = impls.numChildren;
 			for (var i:int = 0; i < len; i++)

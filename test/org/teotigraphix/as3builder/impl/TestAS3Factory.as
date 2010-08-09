@@ -18,7 +18,7 @@ public class TestAS3Factory
 	}
 	
 	[Test]
-	public function test():void
+	public function testBasic():void
 	{
 		var temp:File = File.desktopDirectory.resolvePath("tempTest");
 		
@@ -41,9 +41,11 @@ public class TestAS3Factory
 		
 		var result:String = BuilderFactory.instance.buildTest(classAFile.compilationNode.node);
 		
+		Assert.assertEquals("package \n{\n    public class Test \n    {\n        \n    }\n}", result);
+		
 		//var method:IMethodNode = classA.newMethod("test", Modifier.PUBLIC, "void");
 		//metho.addStatement("trace('Hello World')");
-		project.write();
+		// project.write();
 	}
 }
 }
