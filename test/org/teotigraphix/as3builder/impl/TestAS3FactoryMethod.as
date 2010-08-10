@@ -54,6 +54,27 @@ public class TestAS3FactoryMethod
 	
 	[Test]
 	/*
+	* package {
+	*     public interface ITest {
+	*         function testMethod():String;
+	*     }
+	* }
+	*/
+	public function testBasicInterfaceMethod():void
+	{
+		var testClassFile:ISourceFile = project.newInterface("ITest");
+		var typeNode:ITypeNode = testClassFile.compilationNode.typeNode;
+		
+		var method:IMethodNode = typeNode.newMethod(
+			"testMethod", Modifier.PUBLIC, IdentifierNode.createType("String"));
+		
+		assertBuild("package {\n    public interface ITest {\n        function " +
+			"testMethod():String;\n    }\n}", 
+			testClassFile.compilationNode);
+	}
+	
+	[Test]
+	/*
 	 * package {
 	 *     public class Test {
 	 *         /~~

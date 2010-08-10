@@ -83,7 +83,8 @@ public class BuilderFactory
 	{
 		if (value == AS3NodeKind.COMPILATION_UNIT 
 			|| value == AS3NodeKind.PACKAGE
-			||value == AS3NodeKind.CLASS)
+			||value == AS3NodeKind.CLASS
+			||value == AS3NodeKind.INTERFACE)
 		{
 			_state = value;
 		}
@@ -158,8 +159,11 @@ public class BuilderFactory
 	{
 		// as-doc
 		buildAsDoc(node, tokens);
-		// modifiers
-		buildModifiers(node, tokens);
+		if (state == AS3NodeKind.CLASS)
+		{
+			// modifiers
+			buildModifiers(node, tokens);
+		}
 		// function
 		tokens.push(newToken(KeyWords.FUNCTION));
 		tokens.push(newSpace());
@@ -219,10 +223,17 @@ public class BuilderFactory
 			tokens.push(newToken(":"));
 			tokens.push(newToken(returnType.stringValue));
 		}
-		tokens.push(newSpace());
-		// block
-		var block:IParserNode = ASTUtil.getNode(AS3NodeKind.BLOCK, node);
-		build(block, tokens);
+		if (state == AS3NodeKind.CLASS)
+		{
+			tokens.push(newSpace());
+			// block
+			var block:IParserNode = ASTUtil.getNode(AS3NodeKind.BLOCK, node);
+			build(block, tokens);
+		}
+		else
+		{
+			tokens.push(newToken(";"));
+		}
 	}
 	
 	private function buildPackage(node:IParserNode, tokens:Vector.<Token>):void
@@ -317,6 +328,8 @@ public class BuilderFactory
 	
 	private function buildClass(node:IParserNode, tokens:Vector.<Token>):void
 	{
+		state = AS3NodeKind.CLASS;
+		
 		// as-doc
 		buildAsDoc(node, tokens);
 		// modifiers
@@ -360,6 +373,8 @@ public class BuilderFactory
 	
 	private function buildInterface(node:IParserNode, tokens:Vector.<Token>):void
 	{
+		state = AS3NodeKind.INTERFACE;
+		
 		// modifiers
 		buildModifiers(node, tokens);
 		// interface
