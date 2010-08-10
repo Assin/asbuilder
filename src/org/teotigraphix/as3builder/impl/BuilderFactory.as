@@ -1,6 +1,7 @@
 package org.teotigraphix.as3builder.impl
 {
 
+import org.teotigraphix.as3nodes.api.ISourceFile;
 import org.teotigraphix.as3parser.api.AS3NodeKind;
 import org.teotigraphix.as3parser.api.ASDocNodeKind;
 import org.teotigraphix.as3parser.api.IParserNode;
@@ -53,6 +54,11 @@ public class BuilderFactory
 		}
 		
 		return sb;
+	}
+	
+	public function buildFile(file:ISourceFile):String
+	{
+		return buildTest(file.compilationNode.node);
 	}
 	
 	private var indent:int = 0;

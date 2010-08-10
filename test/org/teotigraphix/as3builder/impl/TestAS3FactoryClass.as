@@ -1,8 +1,6 @@
 package org.teotigraphix.as3builder.impl
 {
 
-import flexunit.framework.Assert;
-
 import org.teotigraphix.as3nodes.api.IClassTypeNode;
 import org.teotigraphix.as3nodes.api.IMetaDataNode;
 import org.teotigraphix.as3nodes.api.ISourceFile;
