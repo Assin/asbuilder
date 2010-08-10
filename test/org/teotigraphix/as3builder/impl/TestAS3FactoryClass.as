@@ -4,6 +4,7 @@ package org.teotigraphix.as3builder.impl
 import flexunit.framework.Assert;
 
 import org.teotigraphix.as3nodes.api.IClassTypeNode;
+import org.teotigraphix.as3nodes.api.IMetaDataNode;
 import org.teotigraphix.as3nodes.api.ISourceFile;
 import org.teotigraphix.as3nodes.impl.IdentifierNode;
 
@@ -111,6 +112,26 @@ public class TestAS3FactoryClass extends TestAS3FactoryBase
 		type.addImplementation(IdentifierNode.createType("IB"));
 		
 		assertBuild("package {\n    public class Test extends A implements IA, IB {\n        \n    }\n}", 
+			testFile.compilationNode);
+	}
+	
+	[Test]
+	/*
+	* package {
+	*     [Bindable]
+	*     public class Test {
+	*         
+	*     }
+	* }
+	*/
+	public function testBasicClassMetaData():void
+	{
+		var testFile:ISourceFile = project.newClass("Test");
+		var type:IClassTypeNode = testFile.compilationNode.typeNode as IClassTypeNode;
+		
+		var metaData:IMetaDataNode = type.newMetaData("Bindable");
+		
+		assertBuild("package {\n    [Bindable]\n    public class Test {\n        \n    }\n}", 
 			testFile.compilationNode);
 	}
 	

@@ -329,10 +329,29 @@ public class BuilderFactory
 		addToken(tokens, newNewLine());
 	}
 	
+	private function buildMetaList(node:IParserNode, tokens:Vector.<Token>):void
+	{
+		var metaList:IParserNode = ASTUtil.getNode(AS3NodeKind.META_LIST, node);
+		if (!metaList || metaList.numChildren == 0)
+			return;
+		
+		var len:int = metaList.numChildren;
+		for (var i:int = 0; i < len; i++)
+		{
+			var child:IParserNode = metaList.children[i];
+			var name:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME, child);
+			tokens.push(newToken("["));
+			tokens.push(newToken(name.stringValue));
+			tokens.push(newToken("]"));
+			addToken(tokens, newNewLine());
+		}
+	}
+	
 	private function buildClass(node:IParserNode, tokens:Vector.<Token>):void
 	{
 		state = AS3NodeKind.CLASS;
-		
+		// meta-list
+		buildMetaList(node, tokens);
 		// as-doc
 		buildAsDoc(node, tokens);
 		// modifiers
