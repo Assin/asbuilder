@@ -138,6 +138,51 @@ public class TestAS3FactoryClass extends TestAS3FactoryBase
 	[Test]
 	/*
 	* package {
+	*     [DefaultProperty("dataProvider")]
+	*     public class Test {
+	*         
+	*     }
+	* }
+	*/
+	public function testBasicClassMetaDataWithParameter():void
+	{
+		var testFile:ISourceFile = project.newClass("Test");
+		var type:IClassTypeNode = testFile.compilationNode.typeNode as IClassTypeNode;
+		
+		var metaData:IMetaDataNode = type.newMetaData("DefaultProperty");
+		metaData.addParameter("\"dataProvider\"");
+		
+		assertBuild("package {\n    [DefaultProperty(\"dataProvider\")]\n    " +
+			"public class Test {\n        \n    }\n}", 
+			testFile.compilationNode);
+	}
+	
+	[Test]
+	/*
+	* package {
+	*     [Event(name="myEvent",type="flash.events.Event")]
+	*     public class Test {
+	*         
+	*     }
+	* }
+	*/
+	public function testBasicClassMetaDataWithNamedParameters():void
+	{
+		var testFile:ISourceFile = project.newClass("Test");
+		var type:IClassTypeNode = testFile.compilationNode.typeNode as IClassTypeNode;
+		
+		var metaData:IMetaDataNode = type.newMetaData("DefaultProperty");
+		metaData.addNamedParameter("name", "\"myEvent\"");
+		metaData.addNamedParameter("type", "\"flash.events.Event\"");
+		
+		assertBuild("package {\n    [DefaultProperty(name=\"myEvent\"," +
+			"type=\"flash.events.Event\")]\n    public class Test {\n        \n    }\n}", 
+			testFile.compilationNode);
+	}
+	
+	[Test]
+	/*
+	* package {
 	*     /~~
 	*      ~ A class comment. 
 	*      ~/

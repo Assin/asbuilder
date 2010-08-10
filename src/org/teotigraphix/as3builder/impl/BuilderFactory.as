@@ -342,6 +342,30 @@ public class BuilderFactory
 			var name:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME, child);
 			tokens.push(newToken("["));
 			tokens.push(newToken(name.stringValue));
+			var paramList:IParserNode = ASTUtil.getNode(AS3NodeKind.PARAMETER_LIST, child);
+			if (paramList && paramList.numChildren > 0)
+			{
+				tokens.push(newToken("("));
+				var lenj:int = paramList.numChildren;
+				for (var j:int = 0; j < lenj; j++)
+				{
+					var param:IParserNode = paramList.children[j];
+					var pname:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME, param);
+					var pvalue:IParserNode = ASTUtil.getNode(AS3NodeKind.VALUE, param);
+					if (pname)
+					{
+						tokens.push(newToken(pname.stringValue));
+						tokens.push(newToken("="));
+					}
+					if (pvalue)
+					{
+						tokens.push(newToken(pvalue.stringValue));
+					}
+					if (j < lenj - 1)
+						tokens.push(newToken(","));
+				}
+				tokens.push(newToken(")"));
+			}
 			tokens.push(newToken("]"));
 			addToken(tokens, newNewLine());
 		}
