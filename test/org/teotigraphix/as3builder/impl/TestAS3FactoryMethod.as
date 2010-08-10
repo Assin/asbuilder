@@ -100,6 +100,31 @@ public class TestAS3FactoryMethod
 			testClassFile.compilationNode);
 	}
 	
+	[Test]
+	/*
+	* package {
+	*     public interface Test {
+	*         /~~
+	*          ~ A test method. 
+	*          ~/
+	*         function testMethod():String;
+	*     }
+	* }
+	*/
+	public function testBasicInterfaceMethodWithComment():void
+	{
+		var testClassFile:ISourceFile = project.newInterface("ITest");
+		var typeNode:ITypeNode = testClassFile.compilationNode.typeNode;
+		
+		var method:IMethodNode = typeNode.newMethod(
+			"testMethod", Modifier.PUBLIC, IdentifierNode.createType("String"));
+		method.description = "A test method.";
+		
+		assertBuild("package {\n    public interface ITest {\n        /**\n         * " +
+			"A test method. \n         */\n        function " +
+			"testMethod():String;\n    }\n}", 
+			testClassFile.compilationNode);
+	}
 	
 	[Test]
 	/*
@@ -353,6 +378,53 @@ public class TestAS3FactoryMethod
 		
 		assertBuild("package {\n    public class Test {\n        public function " +
 			"testMethod(arg0:String, arg1:int, ...arg2):String {\n        }\n    }\n}", 
+			testClassFile.compilationNode);
+	}
+	
+	[Test]
+	/*
+	* package {
+	*     public interface Test {
+	*         function testMethod(arg0:String, arg1:int, ...arg2):String;
+	*     }
+	* }
+	*/
+	public function testBasicInterfaceMethodWithMulitpleArgs():void
+	{
+		var testClassFile:ISourceFile = project.newInterface("ITest");
+		var typeNode:ITypeNode = testClassFile.compilationNode.typeNode;
+		
+		var method:IMethodNode = typeNode.newMethod(
+			"testMethod", Modifier.PUBLIC, IdentifierNode.createType("String"));
+		method.addParameter("arg0", IdentifierNode.createType("String"));
+		method.addParameter("arg1", IdentifierNode.createType("int"));
+		method.addRestParameter("arg2");
+		
+		assertBuild("package {\n    public interface ITest {\n        " +
+			"function testMethod(arg0:String, arg1:int, ...arg2):String;\n    }\n}", 
+			testClassFile.compilationNode);
+	}
+	
+	[Test]
+	/*
+	* package {
+	*     public class Test {
+	*         public function testMethod(arg0:String, arg1:int, ...arg2):String {
+	*         }
+	*     }
+	* }
+	*/
+	public function testClassMethodWithArgAndInit():void
+	{
+		var testClassFile:ISourceFile = project.newClass("Test");
+		var typeNode:ITypeNode = testClassFile.compilationNode.typeNode;
+		
+		var method1:IMethodNode = typeNode.newMethod(
+			"testMethod", Modifier.PUBLIC, IdentifierNode.createType("String"));
+		method1.addParameter("arg0", IdentifierNode.createType("String"), "''");
+		
+		assertBuild("package {\n    public class Test {\n        public function " +
+			"testMethod(arg0:String = ''):String {\n        }\n    }\n}", 
 			testClassFile.compilationNode);
 	}
 	

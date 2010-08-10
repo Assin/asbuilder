@@ -197,9 +197,11 @@ public class BuilderFactory
 					}
 					if (initNode)
 					{
+						var primary:IParserNode = initNode.getChild(0);
+						tokens.push(newSpace());
 						tokens.push(newToken("="));
-						tokens.push(newToken("TOTO IMPLEMENT INIT"));
-						//tokens.push(newToken(initNode.stringValue));
+						tokens.push(newSpace());
+						tokens.push(newToken(primary.stringValue));
 					}
 				}
 				else if (rest)
