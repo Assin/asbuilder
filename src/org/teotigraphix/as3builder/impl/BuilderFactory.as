@@ -248,6 +248,7 @@ public class BuilderFactory
 		if (name.stringValue != null)
 		{
 			tokens.push(newToken(name.stringValue));
+			tokens.push(newSpace());
 		}
 		
 		// content

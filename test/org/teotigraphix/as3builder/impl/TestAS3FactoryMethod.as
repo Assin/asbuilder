@@ -15,21 +15,8 @@ import org.teotigraphix.as3nodes.api.ITypeNode;
 import org.teotigraphix.as3nodes.api.Modifier;
 import org.teotigraphix.as3nodes.impl.IdentifierNode;
 
-public class TestAS3FactoryMethod
+public class TestAS3FactoryMethod extends TestAS3FactoryBase
 {
-	protected var factory:AS3Factory;
-	
-	protected var project:IAS3Project;
-	
-	[Before]
-	public function setUp():void
-	{
-		var output:File = File.desktopDirectory.resolvePath("tempTest");
-		
-		factory = new AS3Factory();
-		project = factory.newASProject(output.nativePath);
-	}
-	
 	[Test]
 	/*
 	 * package {
@@ -409,7 +396,7 @@ public class TestAS3FactoryMethod
 	/*
 	* package {
 	*     public class Test {
-	*         public function testMethod(arg0:String, arg1:int, ...arg2):String {
+	*         public function testMethod(arg0:String = ''):String {
 	*         }
 	*     }
 	* }
@@ -426,12 +413,6 @@ public class TestAS3FactoryMethod
 		assertBuild("package {\n    public class Test {\n        public function " +
 			"testMethod(arg0:String = ''):String {\n        }\n    }\n}", 
 			testClassFile.compilationNode);
-	}
-	
-	protected function assertBuild(text:String, compilationNode:ICompilationNode):void
-	{
-		var result:String = BuilderFactory.instance.buildTest(compilationNode.node);
-		Assert.assertEquals(text, result);
 	}
 }
 }
