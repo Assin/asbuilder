@@ -283,7 +283,7 @@ public class BuilderFactory
 		// as-doc
 		buildAsDoc(node, tokens);
 		// modifiers
-		buildModifiers(node, tokens);
+		buildModList(node, tokens);
 		// class
 		addToken(tokens, newClass());
 		addToken(tokens, newSpace());
@@ -329,7 +329,7 @@ public class BuilderFactory
 		state = AS3NodeKind.INTERFACE;
 		
 		// modifiers
-		buildModifiers(node, tokens);
+		buildModList(node, tokens);
 		// interface
 		addToken(tokens, newInterface());
 		addToken(tokens, newSpace());
@@ -368,7 +368,7 @@ public class BuilderFactory
 		if (state == AS3NodeKind.CLASS)
 		{
 			// modifiers
-			buildModifiers(node, tokens);
+			buildModList(node, tokens);
 		}
 		// function
 		addToken(tokens, newToken(KeyWords.FUNCTION));
@@ -569,7 +569,7 @@ public class BuilderFactory
 	/**
 	 * node is (class|interface|function)
 	 */
-	protected function buildModifiers(node:IParserNode, tokens:Vector.<Token>):void
+	protected function buildModList(node:IParserNode, tokens:Vector.<Token>):void
 	{
 		var mods:IParserNode = ASTUtil.getNode(AS3NodeKind.MOD_LIST, node);
 		if (mods)

@@ -7,6 +7,7 @@ import flexunit.framework.Assert;
 
 import org.teotigraphix.as3nodes.api.IAS3Project;
 import org.teotigraphix.as3nodes.api.ICompilationNode;
+import org.teotigraphix.as3nodes.impl.AS3Factory;
 
 public class TestAS3FactoryBase
 {
