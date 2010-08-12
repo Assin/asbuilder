@@ -449,13 +449,10 @@ public class BuilderFactory
 	 */
 	private function buildAsDoc(node:IParserNode, tokens:Vector.<Token>):void
 	{
-		var asdoc:IParserNode = ASTUtil.getNode(AS3NodeKind.AS_DOC, node);
-		if (!asdoc)
+		if (!hasComment(node))
 			return;
 		
-		//var ast:IParserNode = ParserFactory.instance.asdocParser.
-		//	buildAst(Vector.<String>(asdoc.stringValue.split("\n")), "internal");
-		
+		var asdoc:IParserNode = ASTUtil.getNode(AS3NodeKind.AS_DOC, node);
 		var ast:IParserNode = asdoc.getLastChild();
 		
 		var element:IParserNode;
@@ -519,6 +516,26 @@ public class BuilderFactory
 		}
 		addToken(tokens, newToken(" */"));
 		addToken(tokens, newNewLine());
+	}
+	
+	/**
+	 * @private
+	 */
+	private function hasComment(node:IParserNode):Boolean
+	{
+		var asdoc:IParserNode = ASTUtil.getNode(AS3NodeKind.AS_DOC, node);
+		if (!asdoc)
+			return false;
+		
+		var content:IParserNode = asdoc.getLastChild().getChild(0);
+		
+		var shortList:IParserNode = ASTUtil.getNode(ASDocNodeKind.SHORT_LIST, content);
+		var longList:IParserNode = ASTUtil.getNode(ASDocNodeKind.LONG_LIST, content);
+		var doctagList:IParserNode = ASTUtil.getNode(ASDocNodeKind.DOCTAG_LIST, content);
+		
+		return (shortList && shortList.numChildren > 0)
+		|| (longList && longList.numChildren > 0)
+			|| (doctagList && doctagList.numChildren > 0);
 	}
 	
 	/**
