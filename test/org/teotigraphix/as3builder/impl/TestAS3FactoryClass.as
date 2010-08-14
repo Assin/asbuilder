@@ -246,8 +246,8 @@ public class TestAS3FactoryClass extends TestAS3FactoryBase
 		var classType:IClassTypeNode = testFile.compilationNode.typeNode as IClassTypeNode;
 		classType.description = "A class comment.\n <p>Long description documentation.</p>";
 		
-		classType.comment.addDocTag("author", "Jane Doe");
-		classType.comment.addDocTag("author", "John Doe");
+		classType.comment.newDocTag("author", "Jane Doe");
+		classType.comment.newDocTag("author", "John Doe");
 		
 		assertBuild("package {\n    /**\n     * A class comment.\n     * \n     * " +
 			"<p>Long description documentation.</p> \n     * \n     * " +
