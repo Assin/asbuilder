@@ -35,6 +35,7 @@ import org.teotigraphix.as3nodes.api.IClassTypeNode;
 import org.teotigraphix.as3nodes.api.ICompilationNode;
 import org.teotigraphix.as3nodes.api.IConstantNode;
 import org.teotigraphix.as3nodes.api.IFunctionTypeNode;
+import org.teotigraphix.as3nodes.api.IIdentifierNode;
 import org.teotigraphix.as3nodes.api.IInterfaceTypeNode;
 import org.teotigraphix.as3nodes.api.IMethodNode;
 import org.teotigraphix.as3nodes.api.INode;
@@ -44,6 +45,7 @@ import org.teotigraphix.as3nodes.api.ISeeLinkAware;
 import org.teotigraphix.as3nodes.api.ISourceFile;
 import org.teotigraphix.as3nodes.api.ISourceFilePackage;
 import org.teotigraphix.as3nodes.api.ITypeNode;
+import org.teotigraphix.as3nodes.api.Modifier;
 import org.teotigraphix.as3nodes.impl.SeeLink;
 import org.teotigraphix.as3nodes.impl.SourceFilePackage;
 import org.teotigraphix.as3parser.api.AS3NodeKind;
@@ -390,6 +392,10 @@ public class AS3Book extends EventDispatcher implements IAS3Book
 		var setter:IAccessorNode;
 		// FIXME this will need to search superclasses as well
 		// this is probably not the place to do this
+		var type:IIdentifierNode;
+		var access:String;
+		var visibility:Modifier;
+		var acc:IAccessorNode;
 		
 		// need to merge the accessors into ONE element, the content
 		// will still hold all the original information
@@ -402,13 +408,28 @@ public class AS3Book extends EventDispatcher implements IAS3Book
 				
 				if (setter != null)
 				{
-					getter.access = "read-write";
-					setter.access = "read-write";
+					access = "read-write";
+					getter.access = access;
+					setter.access = access;
 				}
 				else
 				{
-					getter.access = "read";
+					access = "read";
+					getter.access = access;
 				}
+				
+				for each (var element:Modifier in getter.modifiers) 
+				{
+					if (!element.equals(Modifier.OVERRIDE) 
+						&& !element.equals(Modifier.STATIC))
+					{
+						visibility = element;
+					}
+				}
+				
+				type = getter.type;
+				
+				//acc = ITypeNode(getter.parent).newAccessor(getter.name, visibility, access, type);
 				
 				addAccessor(getter);
 				ITypeNode(getter.parent).addAccessor(getter);
@@ -421,13 +442,27 @@ public class AS3Book extends EventDispatcher implements IAS3Book
 			{
 				if (!setter.isReadWrite)
 				{
-					setter.access = "write";
+					access = "write";
+					setter.access = access;
 					
 					// need to take the param type and put it into setType()
 					var parameter:IParameterNode = setter.parameters[0];
 					setter.type = parameter.type;
 					
 					addAccessor(setter);
+
+					for each (var element:Modifier in setter.modifiers) 
+					{
+						if (element.equals(Modifier.OVERRIDE) 
+							&& !element.equals(Modifier.STATIC))
+						{
+							visibility = element;
+						}
+					}
+					
+					type = setter.type;
+					
+					//acc = ITypeNode(setter.parent).newAccessor(setter.name, visibility, access, type);
 					ITypeNode(setter.parent).addAccessor(setter);
 				}
 			}
