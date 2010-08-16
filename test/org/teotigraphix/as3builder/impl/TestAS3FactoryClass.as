@@ -182,7 +182,7 @@ public class TestAS3FactoryClass extends TestAS3FactoryBase
 	/*
 	* package {
 	*     /~~
-	*      ~ A class comment. 
+	*      ~ A class comment.
 	*      ~/
 	*     public class Test {
 	*         
@@ -195,7 +195,7 @@ public class TestAS3FactoryClass extends TestAS3FactoryBase
 		var classType:IClassTypeNode = testFile.compilationNode.typeNode as IClassTypeNode;
 		classType.description = "A class comment.";
 		
-		assertBuild("package {\n    /**\n     * A class comment. \n     */\n    " +
+		assertBuild("package {\n    /**\n     * A class comment.\n     */\n    " +
 			"public class Test {\n        \n    }\n}", 
 			testFile.compilationNode);
 	}
@@ -206,7 +206,7 @@ public class TestAS3FactoryClass extends TestAS3FactoryBase
 	*     /~~
 	*      ~ A class comment.
 	*      ~ 
-	*      ~ <p>Long description documentation.</p> 
+	*      ~ <p>Long description documentation.</p>
 	*      ~/
 	*     public class Test {
 	*         
@@ -220,7 +220,7 @@ public class TestAS3FactoryClass extends TestAS3FactoryBase
 		classType.description = "A class comment.\n <p>Long description documentation.</p>";
 		
 		assertBuild("package {\n    /**\n     * A class comment.\n     * \n     * <p>Long description " +
-			"documentation.</p> \n     */\n    public class Test {\n        \n    }\n}", 
+			"documentation.</p>\n     */\n    public class Test {\n        \n    }\n}", 
 			testFile.compilationNode);
 	}
 	
@@ -230,7 +230,7 @@ public class TestAS3FactoryClass extends TestAS3FactoryBase
 	*     /~~
 	*      ~ A class comment.
 	*      ~ 
-	*      ~ <p>Long description documentation.</p> 
+	*      ~ <p>Long description documentation.</p>
 	*      ~ 
 	*      ~ @author Jane Doe
 	*      ~ @author John Doe
@@ -250,7 +250,7 @@ public class TestAS3FactoryClass extends TestAS3FactoryBase
 		classType.comment.newDocTag("author", "John Doe");
 		
 		assertBuild("package {\n    /**\n     * A class comment.\n     * \n     * " +
-			"<p>Long description documentation.</p> \n     * \n     * " +
+			"<p>Long description documentation.</p>\n     * \n     * " +
 			"@author Jane Doe\n     * @author John Doe\n     */\n    " +
 			"public class Test {\n        \n    }\n}", 
 			testFile.compilationNode);

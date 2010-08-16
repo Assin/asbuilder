@@ -65,7 +65,7 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 	 * package {
 	 *     public class Test {
 	 *         /~~
-	 *          ~ A test method. 
+	 *          ~ A test method.
 	 *          ~/
 	 *         public function testMethod():String {
 	 *         }
@@ -82,7 +82,7 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 		method.description = "A test method.";
 		
 		assertBuild("package {\n    public class Test {\n        /**\n         * " +
-			"A test method. \n         */\n        public function " +
+			"A test method.\n         */\n        public function " +
 			"testMethod():String {\n        }\n    }\n}", 
 			testClassFile.compilationNode);
 	}
@@ -92,7 +92,7 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 	* package {
 	*     public interface Test {
 	*         /~~
-	*          ~ A test method. 
+	*          ~ A test method.
 	*          ~/
 	*         function testMethod():String;
 	*     }
@@ -108,7 +108,7 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 		method.description = "A test method.";
 		
 		assertBuild("package {\n    public interface ITest {\n        /**\n         * " +
-			"A test method. \n         */\n        function " +
+			"A test method.\n         */\n        function " +
 			"testMethod():String;\n    }\n}", 
 			testClassFile.compilationNode);
 	}
@@ -120,7 +120,7 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 	 *         /~~
 	 *          ~ A test method.
 	 *          ~ 
-	 *          ~ <p>Long description.</p> 
+	 *          ~ <p>Long description.</p>
 	 *          ~ 
 	 *          ~ @since 1.0
 	 *          ~ @return A String indicating success
@@ -142,7 +142,7 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 		method.addReturnDescription("A String indicating success.");
 		
 		assertBuild("package {\n    public class Test {\n        /**\n         " +
-			"* A test method.\n         * \n         * <p>Long description.</p> " +
+			"* A test method.\n         * \n         * <p>Long description.</p>" +
 			"\n         * \n         * @since 1.0\n         * @return A String " +
 			"indicating success.\n         */\n        public function " +
 			"testMethod():String {\n        }\n    }\n}", 
@@ -183,14 +183,13 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 	}
 	
 	[Test]
-	/**
-	 * 
+	/*
 	 * package {
 	 *     public class Test {
 	 *         /~~
 	 *          ~ A test method.
 	 *          ~ 
-	 *          ~ <p>Long description.</p> 
+	 *          ~ <p>Long description.</p>
 	 *          ~ 
 	 *          ~ @since 1.0
 	 *          ~ @param arg0 An argument at 0
@@ -216,7 +215,7 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 		
 		assertBuild("package {\n    public class Test {\n        /**\n         " +
 			"* A test method.\n         * \n         * " +
-			"<p>Long description.</p> \n         * \n         * @since 1.0\n " +
+			"<p>Long description.</p>\n         * \n         * @since 1.0\n " +
 			"        * @param arg0 An argument at 0\n         * @return A " +
 			"String indicating success.\n         */\n        public function " +
 			"testMethod(arg0:String):String {\n        }\n    }\n}", 
