@@ -229,6 +229,12 @@ public class BuilderFactory
 					if (i < len - 1)
 						addToken(tokens, newNewLine());
 				}
+				else if (node.isKind(AS3NodeKind.VAR_LIST))
+				{
+					buildAttribute(node, tokens);
+					if (i < len - 1)
+						addToken(tokens, newNewLine());
+				}
 				else
 				{
 					tokens = build(node, tokens);
@@ -356,6 +362,43 @@ public class BuilderFactory
 		// content
 		var content:IParserNode = ASTUtil.getNode(AS3NodeKind.CONTENT, node);
 		build(content, tokens);
+	}
+	
+	/**
+	 * node is (var)
+	 */
+	private function buildAttribute(node:IParserNode, tokens:Vector.<Token>):void
+	{
+		// meta-list
+		buildMetaList(node, tokens);
+		// as-doc
+		buildAsDoc(node, tokens);
+		// modifiers
+		buildModList(node, tokens);
+		// var
+		addToken(tokens, newToken(KeyWords.VAR));
+		addToken(tokens, newSpace());
+		var nit:IParserNode = node.getKind(AS3NodeKind.NAME_TYPE_INIT);
+		// name
+		var name:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME, nit);
+		addToken(tokens, newToken(name.stringValue));
+		// type
+		var type:IParserNode = ASTUtil.getNode(AS3NodeKind.TYPE, nit);
+		if (type)
+		{
+			addToken(tokens, newColumn());
+			addToken(tokens, newToken(type.stringValue));
+		}
+		// init
+		var init:IParserNode = ASTUtil.getNode(AS3NodeKind.INIT, nit);
+		if (init && init.numChildren > 0)
+		{
+			addToken(tokens, newSpace());
+			addToken(tokens, newEquals());
+			addToken(tokens, newSpace());
+			addToken(tokens, newToken(init.getKind(AS3NodeKind.PRIMARY).stringValue));
+		}
+		addToken(tokens, newSemiColumn());
 	}
 	
 	/**
@@ -589,7 +632,7 @@ public class BuilderFactory
 	protected function buildModList(node:IParserNode, tokens:Vector.<Token>):void
 	{
 		var mods:IParserNode = ASTUtil.getNode(AS3NodeKind.MOD_LIST, node);
-		if (mods)
+		if (mods && mods.numChildren > 0)
 		{
 			for each (var mod:IParserNode in mods.children)
 			{
