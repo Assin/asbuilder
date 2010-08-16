@@ -13,10 +13,41 @@ import org.teotigraphix.as3nodes.api.IParameterNode;
 import org.teotigraphix.as3nodes.api.ISourceFile;
 import org.teotigraphix.as3nodes.api.ITypeNode;
 import org.teotigraphix.as3nodes.api.Modifier;
+import org.teotigraphix.as3nodes.impl.AS3SourceFile;
+import org.teotigraphix.as3nodes.impl.CompilationNode;
 import org.teotigraphix.as3nodes.impl.IdentifierNode;
+import org.teotigraphix.as3nodes.impl.NodeFactory;
+import org.teotigraphix.as3nodes.impl.SourceFile;
+import org.teotigraphix.as3parser.api.IParserNode;
+import org.teotigraphix.as3parser.core.SourceCode;
+import org.teotigraphix.as3parser.impl.AS3Parser;
 
 public class TestAS3FactoryMethod extends TestAS3FactoryBase
 {
+	[Test]
+	public function testBasicParseMethod():void
+	{
+		// tests that the build is just "building" AST since the 
+		// whitespace is determined by the builder not how the AST was parsed
+		var lines:Array =
+			[
+				"package     ",
+				"{",
+				"    public   class    Test    {",
+				"        public   function    testMethod  (  )  :  String",
+				"   {",
+				"        } } }"
+			];
+		
+		var sourceNode:SourceFile = new AS3SourceFile(
+			null, new SourceCode(lines.join("\n"), "", ""));
+		sourceNode.buildAst();
+		
+		assertBuild("package {\n    public class Test {\n        public function " +
+			"testMethod():String {\n        }\n    }\n}", 
+			sourceNode.compilationNode);
+	}
+	
 	[Test]
 	/*
 	 * package {
@@ -36,6 +67,13 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 		
 		assertBuild("package {\n    public class Test {\n        public function " +
 			"testMethod():String {\n        }\n    }\n}", 
+			testClassFile.compilationNode);
+		
+		// test remove a method, this will reflect in the built code
+		// since the method is taken out of the AST
+		Assert.assertNotNull(typeNode.removeMethod(method));
+		
+		assertBuild("package {\n    public class Test {\n        \n    }\n}", 
 			testClassFile.compilationNode);
 	}
 	
@@ -138,7 +176,7 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 		var method:IMethodNode = typeNode.newMethod(
 			"testMethod", Modifier.PUBLIC, IdentifierNode.createType("String"));
 		method.description = "A test method.\n <p>Long description.</p>";
-		method.addDocTag("since", "1.0");
+		method.newDocTag("since", "1.0");
 		method.addReturnDescription("A String indicating success.");
 		
 		assertBuild("package {\n    public class Test {\n        /**\n         " +
@@ -209,7 +247,7 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 			"testMethod", Modifier.PUBLIC, IdentifierNode.createType("String"));
 		var param:IParameterNode = method.addParameter("arg0", IdentifierNode.createType("String"));
 		method.description = "A test method.\n <p>Long description.</p>";
-		method.addDocTag("since", "1.0");
+		method.newDocTag("since", "1.0");
 		param.description = "An argument at 0";
 		method.addReturnDescription("A String indicating success.");
 		

@@ -262,7 +262,7 @@ public class BuilderFactory
 		addToken(tokens, newSpace());
 		// name
 		var name:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME, node);
-		if (name.stringValue != null)
+		if (name.stringValue && name.stringValue != null)
 		{
 			addToken(tokens, newToken(name.stringValue));
 			addToken(tokens, newSpace());
