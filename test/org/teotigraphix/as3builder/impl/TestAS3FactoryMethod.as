@@ -49,6 +49,64 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 	}
 	
 	[Test]
+	public function testBasicStringCreateMethod():void
+	{
+		var code:String = "package my.domain{public dynamic class Test{ " +
+			"public function testMethod1():String{}" +
+			"public function testMethod2(arg0:String = null):int{}}}";
+		
+		var sourceNode:SourceFile = new AS3SourceFile(
+			null, new SourceCode(code, "", ""));
+		sourceNode.buildAst();
+		
+		assertBuild("package my.domain {\n    public dynamic class Test {\n        " +
+			"public function testMethod1():String {\n        }\n        " +
+			"public function testMethod2(arg0:String = null):int {\n        " +
+			"}\n    }\n}", 
+			sourceNode.compilationNode);
+		
+		code = "package my.domain{public dynamic class Test{ " +
+			"public function testMethod1():String{}" +
+			"public function testMethod2(arg0:String = null):int{}" +
+			"public function testMethod3(arg0:String = null, ...rest):my.domain.Test{}}}";
+		
+		sourceNode = new AS3SourceFile(
+			null, new SourceCode(code, "", ""));
+		sourceNode.buildAst();
+		
+		assertBuild("package my.domain {\n    public dynamic class Test {\n        " +
+			"public function testMethod1():String {\n        }\n        " +
+			"public function testMethod2(arg0:String = null):int {\n        }\n        " +
+			"public function testMethod3(arg0:String = null, ...rest):my.domain.Test " +
+			"{\n        }\n    }\n}", 
+			sourceNode.compilationNode);
+		
+		var typeNode:ITypeNode = sourceNode.compilationNode.typeNode;
+		var method:IMethodNode = typeNode.getMethod("testMethod2");
+		Assert.assertNotNull(method);
+		Assert.assertEquals("testMethod2", method.name);
+		typeNode.removeMethod(method);
+		
+		assertBuild("package my.domain {\n    public dynamic class Test {\n        " +
+			"public function testMethod1():String {\n        }\n        " +
+			"public function testMethod3(arg0:String = null, ...rest):my.domain.Test " +
+			"{\n        }\n    }\n}", 
+			sourceNode.compilationNode);
+		
+		method = typeNode.getMethod("testMethod3");
+		typeNode.removeMethod(method);
+		Assert.assertEquals(1, typeNode.methods.length);
+		
+		// uid is not qualified yet, book does that so this test is real
+		method = typeNode.getMethod("testMethod1");
+		method.uid = IdentifierNode.createName("testMethod42");
+		
+		assertBuild("package my.domain {\n    public dynamic class Test {\n        " +
+			"public function testMethod42():String {\n        }\n    }\n}", 
+			sourceNode.compilationNode);
+	}
+	
+	[Test]
 	/*
 	 * package {
 	 *     public class Test {
