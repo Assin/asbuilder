@@ -396,7 +396,7 @@ public class AS3Book extends EventDispatcher implements IAS3Book
 		var access:String;
 		var visibility:Modifier;
 		var acc:IAccessorNode;
-		
+		var element:Modifier;
 		// need to merge the accessors into ONE element, the content
 		// will still hold all the original information
 		if (getters != null)
@@ -418,7 +418,7 @@ public class AS3Book extends EventDispatcher implements IAS3Book
 					getter.access = access;
 				}
 				
-				for each (var element:Modifier in getter.modifiers) 
+				for each (element in getter.modifiers) 
 				{
 					if (!element.equals(Modifier.OVERRIDE) 
 						&& !element.equals(Modifier.STATIC))
@@ -451,7 +451,7 @@ public class AS3Book extends EventDispatcher implements IAS3Book
 					
 					addAccessor(setter);
 
-					for each (var element:Modifier in setter.modifiers) 
+					for each (element in setter.modifiers) 
 					{
 						if (element.equals(Modifier.OVERRIDE) 
 							&& !element.equals(Modifier.STATIC))

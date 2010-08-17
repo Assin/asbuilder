@@ -1035,13 +1035,13 @@ public class BuilderFactory
 	// "="
 	public function newEquals():Token
 	{
-		return newToken("=");
+		return newToken(Operators.EQUAL);
 	}
 	
 	// ","
 	public function newComma():Token
 	{
-		return newToken(",");
+		return newToken(Operators.COMMA);
 	}
 	
 	// ";"
