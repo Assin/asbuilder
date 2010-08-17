@@ -1,6 +1,7 @@
 package org.teotigraphix.as3builder.impl
 {
 
+import org.teotigraphix.as3nodes.api.Access;
 import org.teotigraphix.as3nodes.api.IClassTypeNode;
 import org.teotigraphix.as3nodes.api.IMetaDataNode;
 import org.teotigraphix.as3nodes.api.ISourceFile;
@@ -269,9 +270,18 @@ public class TestAS3FactoryClass extends TestAS3FactoryBase
 	 *     {
 	 * 
 	 *         public static const MY_CONSTANT:String = "value";
-	 * 
+	 *         
 	 *         public var myAttribute:String = null;
-	 * 
+	 *         
+	 *         public function get myAccessor():String 
+	 *         {
+	 *             return null;
+	 *         }
+	 *         
+	 *         public function set myAccessor(value:String):void 
+	 *         {
+	 *         }
+	 *         
 	 *         public function myMethod():String
 	 *         {
 	 *         }
@@ -287,6 +297,8 @@ public class TestAS3FactoryClass extends TestAS3FactoryBase
 		classType.newMetaData("Bindable");
 		classType.newConstant("MY_CONSTANT", Modifier.PUBLIC, IdentifierNode.createType("String"), "\"value\"");
 		classType.newAttribute("myAttribute", Modifier.PUBLIC, IdentifierNode.createType("String"), "null");
+		classType.newAccessor("myAccessor", Modifier.PUBLIC, Access.READ, IdentifierNode.createType("String"));
+		classType.newAccessor("myAccessor", Modifier.PUBLIC, Access.WRITE, IdentifierNode.createType("String"));
 		classType.newMethod("myMethod", Modifier.PUBLIC, IdentifierNode.createType("String"));
 		
 		BuilderFactory.breakPackageBracket = true;
@@ -294,11 +306,14 @@ public class TestAS3FactoryClass extends TestAS3FactoryBase
 		BuilderFactory.breakBlockBracket = true;
 		BuilderFactory.newlinesBeforeMembers = 1;
 		
-		assertBuild("package my.package \n{\n    [Bindable]\n    /**\n     " +
-			"* @private \n     */\n    public class Test \n    {\n        " +
-			"\n        public static const MY_CONSTANT:String = \"value\";\n" +
-			"        \n        public var myAttribute:String = null;\n        " +
-			"\n        public function myMethod():String \n        " +
+		assertBuild("package my.package \n{\n    [Bindable]\n    /**\n     * " +
+			"@private \n     */\n    public class Test \n    {\n        \n        " +
+			"public static const MY_CONSTANT:String = \"value\";\n        \n        " +
+			"public var myAttribute:String = null;\n        \n        " +
+			"public function get myAccessor():String \n        {\n            " +
+			"return null;\n        }\n        \n        " +
+			"public function set myAccessor(value:String):void \n        {\n        " +
+			"}\n        \n        public function myMethod():String \n        " +
 			"{\n        }\n    }\n}", 
 			testFile.compilationNode);
 		

@@ -94,5 +94,49 @@ public class TestAS3FactoryAccessor extends TestAS3FactoryBase
 			"testProperty1(value:String):void {\n        }\n    }\n}", 
 			testClassFile.compilationNode);
 	}
+	
+	[Test]
+	/*
+	* package {
+	*     public class Test {
+	*         public function get testProperty1():int|uint|Number {
+	*             return -1;
+	*         }
+	*     }
+	* }
+	*/
+	public function testBasicIntUnitNumber():void
+	{
+		var testClassFile:ISourceFile = project.newClass("Test");
+		var typeNode:ITypeNode = testClassFile.compilationNode.typeNode;
+		
+		var accessor:IAccessorNode;
+		
+		accessor = typeNode.newAccessor(
+			"testProperty1", Modifier.PUBLIC, Access.READ, IdentifierNode.createType("int"));
+		
+		assertBuild("package {\n    public class Test {\n        " +
+			"public function get testProperty1():int {\n            " +
+			"return -1;\n        }\n    }\n}", 
+			testClassFile.compilationNode);
+		typeNode.removeAccessor(accessor);
+		
+		accessor = typeNode.newAccessor(
+			"testProperty1", Modifier.PUBLIC, Access.READ, IdentifierNode.createType("uint"));
+		
+		assertBuild("package {\n    public class Test {\n        " +
+			"public function get testProperty1():uint {\n            " +
+			"return -1;\n        }\n    }\n}", 
+			testClassFile.compilationNode);
+		typeNode.removeAccessor(accessor);
+		
+		accessor = typeNode.newAccessor(
+			"testProperty1", Modifier.PUBLIC, Access.READ, IdentifierNode.createType("Number"));
+		
+		assertBuild("package {\n    public class Test {\n        " +
+			"public function get testProperty1():Number {\n            " +
+			"return -1;\n        }\n    }\n}", 
+			testClassFile.compilationNode);
+	}
 }
 }
