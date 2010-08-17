@@ -291,6 +291,22 @@ public class BuilderFactory
 					if (i < len - 1)
 						addToken(tokens, newNewLine());
 				}
+				else if (node.isKind(AS3NodeKind.GET))
+				{
+					addNewlinesBeforeMembers(node, tokens);
+					buildGetter(node, tokens);
+					addNewlinesAfterMembers(node, tokens);
+					if (i < len - 1)
+						addToken(tokens, newNewLine());
+				}
+				else if (node.isKind(AS3NodeKind.SET))
+				{
+					addNewlinesBeforeMembers(node, tokens);
+					buildSetter(node, tokens);
+					addNewlinesAfterMembers(node, tokens);
+					if (i < len - 1)
+						addToken(tokens, newNewLine());
+				}
 				else if (node.isKind(AS3NodeKind.FUNCTION))
 				{
 					addNewlinesBeforeMembers(node, tokens);
@@ -299,11 +315,30 @@ public class BuilderFactory
 					if (i < len - 1)
 						addToken(tokens, newNewLine());
 				}
+				else if (node.isKind(AS3NodeKind.BLOCK))
+				{
+					//addNewlinesBeforeMembers(node, tokens);
+					buildBlock(node, tokens);
+					//addNewlinesAfterMembers(node, tokens);
+					//if (i < len - 1)
+					//	addToken(tokens, newNewLine());
+				}
 				else
 				{
 					tokens = build(node, tokens);
 				}
 			}
+		}
+		
+		if (ast.isKind(AS3NodeKind.BLOCK))
+		{
+			if (ast.numChildren > 0)
+				addToken(tokens, newNewLine());
+			//addNewlinesBeforeMembers(node, tokens);
+			buildBlock(ast, tokens);
+			//addNewlinesAfterMembers(node, tokens);
+			//if (i < len - 1)
+			//addToken(tokens, newNewLine());
 		}
 		
 		if (state != AS3NodeKind.COMPILATION_UNIT)
@@ -502,6 +537,137 @@ public class BuilderFactory
 	}
 	
 	/**
+	 * node is (get)
+	 */
+	private function buildGetter(node:IParserNode, tokens:Vector.<Token>):void
+	{
+		// as-doc
+		buildAsDoc(node, tokens);
+		if (state == AS3NodeKind.CLASS)
+		{
+			// modifiers
+			buildModList(node, tokens);
+		}
+		// function
+		addToken(tokens, newToken(KeyWords.FUNCTION));
+		addToken(tokens, newSpace());
+		addToken(tokens, newToken(KeyWords.GET));
+		addToken(tokens, newSpace());
+		// name
+		var name:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME, node);
+		addToken(tokens, newToken(name.stringValue));
+		// parameters [none]
+		addToken(tokens, newLeftParenthesis());
+		addToken(tokens, newRightParenthesis());
+		// returnType
+		var returnType:IParserNode = ASTUtil.getNode(AS3NodeKind.TYPE, node);
+		if (returnType)
+		{
+			addToken(tokens, newColumn());
+			addToken(tokens, newToken(returnType.stringValue));
+		}
+		if (state == AS3NodeKind.CLASS)
+		{
+			addToken(tokens, newSpace());
+			// block
+			var block:IParserNode = ASTUtil.getNode(AS3NodeKind.BLOCK, node);
+			build(block, tokens);
+		}
+		else
+		{
+			addToken(tokens, newSemiColumn());
+		}
+	}
+	
+	/**
+	 * node is (set)
+	 */
+	private function buildSetter(node:IParserNode, tokens:Vector.<Token>):void
+	{
+		// as-doc
+		buildAsDoc(node, tokens);
+		if (state == AS3NodeKind.CLASS)
+		{
+			// modifiers
+			buildModList(node, tokens);
+		}
+		// function
+		addToken(tokens, newToken(KeyWords.FUNCTION));
+		addToken(tokens, newSpace());
+		addToken(tokens, newToken(KeyWords.SET));
+		addToken(tokens, newSpace());
+		// name
+		var name:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME, node);
+		addToken(tokens, newToken(name.stringValue));
+		// parameters
+		addToken(tokens, newLeftParenthesis());
+		var parameterList:IParserNode = ASTUtil.getNode(AS3NodeKind.PARAMETER_LIST, node);
+		if (parameterList)
+		{
+			var len:int = parameterList.numChildren;
+			for (var i:int = 0; i < len; i++)
+			{
+				var param:IParserNode = parameterList.children[i] as IParserNode;
+				var nti:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME_TYPE_INIT, param);
+				var rest:IParserNode = ASTUtil.getNode(AS3NodeKind.REST, param);
+				if (nti)
+				{
+					var nameNode:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME, nti);
+					var typeNode:IParserNode = ASTUtil.getNode(AS3NodeKind.TYPE, nti);
+					var initNode:IParserNode = ASTUtil.getNode(AS3NodeKind.INIT, nti);
+					if (nameNode)
+					{
+						addToken(tokens, newToken(nameNode.stringValue));
+					}
+					if (typeNode)
+					{
+						addToken(tokens, newColumn());
+						addToken(tokens, newToken(typeNode.stringValue));
+					}
+					if (initNode)
+					{
+						var primary:IParserNode = initNode.getChild(0);
+						addToken(tokens, newSpace());
+						addToken(tokens, newEquals());
+						addToken(tokens, newSpace());
+						addToken(tokens, newToken(primary.stringValue));
+					}
+				}
+				else if (rest)
+				{
+					addToken(tokens, newRestParameters());
+					addToken(tokens, newToken(rest.stringValue));
+				}
+				
+				if (i < len - 1)
+				{
+					addToken(tokens, newComma());
+					addToken(tokens, newSpace());
+				}
+			}
+		}
+		addToken(tokens, newRightParenthesis());
+		// returnType
+		var returnType:IParserNode = ASTUtil.getNode(AS3NodeKind.TYPE, node);
+		if (returnType)
+		{
+			addToken(tokens, newColumn());
+			addToken(tokens, newToken(returnType.stringValue));
+		}
+		if (state == AS3NodeKind.CLASS)
+		{
+			addToken(tokens, newSpace());
+			// block
+			var block:IParserNode = ASTUtil.getNode(AS3NodeKind.BLOCK, node);
+			build(block, tokens);
+		}
+		else
+		{
+			addToken(tokens, newSemiColumn());
+		}
+	}
+	
+	/**
 	 * node is (function)
 	 */
 	private function buildFunction(node:IParserNode, tokens:Vector.<Token>):void
@@ -584,6 +750,27 @@ public class BuilderFactory
 		else
 		{
 			addToken(tokens, newSemiColumn());
+		}
+	}
+	
+	/**
+	 * node is (block)
+	 */
+	private function buildBlock(node:IParserNode, tokens:Vector.<Token>):void
+	{
+		
+		var len:int = node.numChildren;
+		
+		for (var i:int = 0; i < len; i++)
+		{
+			var child:IParserNode = node.children[i];
+			if (child.isKind("return"))
+			{
+				addToken(tokens, newToken("return"));
+				addToken(tokens, newSpace());
+				addToken(tokens, newToken(child.getKind("primary").stringValue));
+				addToken(tokens, newSemiColumn());
+			}
 		}
 	}
 	
@@ -770,7 +957,7 @@ public class BuilderFactory
 				if (breakTypeBracket 
 					&& (contentState == AS3NodeKind.CLASS 
 						|| contentState == AS3NodeKind.INTERFACE
-					    || contentState == AS3NodeKind.FUNCTION))
+						|| contentState == AS3NodeKind.FUNCTION))
 				{
 					lastToken = newNewLine();
 					break;

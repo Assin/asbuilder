@@ -35,19 +35,26 @@ public class TestAS3Book extends AbstractElementTest
 	{
 		book = BookFactory.instance.createBook();
 		
-		book.addSourceFile(parse(ClassA));
-		book.addSourceFile(parse(functionA));
-		book.addSourceFile(parse(ADefaultPackageClass));
-		book.addSourceFile(parse(RestrictedClass));
-		book.addSourceFile(parse(ClassB));
-		book.addSourceFile(parse(ClassC));
-		book.addSourceFile(parse(ClassD));
-		book.addSourceFile(parse(ClassE));
-		book.addSourceFile(parse(ICoreInterface));
-		book.addSourceFile(parse(InterfaceA));
-		book.addSourceFile(parse(InterfaceB));
-		book.addSourceFile(parse(TypeClass));
-		book.addSourceFile(parse(TestProject));
+		try
+		{
+			book.addSourceFile(parse(ClassA));
+			book.addSourceFile(parse(functionA));
+			book.addSourceFile(parse(ADefaultPackageClass));
+			book.addSourceFile(parse(RestrictedClass));
+			book.addSourceFile(parse(ClassB));
+			book.addSourceFile(parse(ClassC));
+			book.addSourceFile(parse(ClassD));
+			book.addSourceFile(parse(ClassE));
+			book.addSourceFile(parse(ICoreInterface));
+			book.addSourceFile(parse(InterfaceA));
+			book.addSourceFile(parse(InterfaceB));
+			book.addSourceFile(parse(TypeClass));
+			book.addSourceFile(parse(TestProject));
+		}
+		catch (e:Error)
+		{
+			trace(e);
+		}
 		
 		book.process();
 	}
