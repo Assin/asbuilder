@@ -55,6 +55,16 @@ import org.teotigraphix.as3parser.utils.ASTUtil;
  */
 public class BuilderFactory
 {
+	public static var breakPackageBracket:Boolean = false;
+	
+	public static var breakTypeBracket:Boolean = false;
+	
+	public static var breakBlockBracket:Boolean = false;
+	
+	public static var newlinesBeforeMembers:int = 0;
+	
+	public static var newlinesAfterMembers:int = 0;
+	
 	//--------------------------------------------------------------------------
 	//
 	//  Private :: Variables
@@ -102,9 +112,42 @@ public class BuilderFactory
 		if (value == AS3NodeKind.COMPILATION_UNIT 
 			|| value == AS3NodeKind.PACKAGE
 			||value == AS3NodeKind.CLASS
-			||value == AS3NodeKind.INTERFACE)
+			||value == AS3NodeKind.INTERFACE
+			||value == AS3NodeKind.FUNCTION)
 		{
 			_state = value;
+		}
+	}
+	
+	//----------------------------------
+	//  contentState
+	//----------------------------------
+	
+	/**
+	 * @private
+	 */
+	private var _contentState:String;
+	
+	/**
+	 * The current node state in the builder.
+	 */
+	protected function get contentState():String
+	{
+		return _contentState;
+	}
+	
+	/**
+	 * @private
+	 */	
+	protected function set contentState(value:String):void
+	{
+		if (value == AS3NodeKind.COMPILATION_UNIT 
+			|| value == AS3NodeKind.PACKAGE
+			|| value == AS3NodeKind.CLASS
+			|| value == AS3NodeKind.INTERFACE
+			|| value == AS3NodeKind.FUNCTION)
+		{
+			_contentState = value;
 		}
 	}
 	
@@ -143,6 +186,7 @@ public class BuilderFactory
 		var sb:String = "";
 		
 		state = AS3NodeKind.COMPILATION_UNIT;
+		contentState = AS3NodeKind.PACKAGE;
 		
 		var tokens:Vector.<Token> = build(ast);
 		
@@ -180,6 +224,7 @@ public class BuilderFactory
 			throw new Error("root must be compilation-unit");
 		}
 		
+		contentState = AS3NodeKind.PACKAGE;
 		state = AS3NodeKind.COMPILATION_UNIT;
 		
 		var tokens:Vector.<Token> = build(ast);
@@ -202,6 +247,13 @@ public class BuilderFactory
 			addToken(tokens, buildContainerBeforeStartNewline(ast));
 			addToken(tokens, buildContainerStart(ast));
 			addToken(tokens, buildContainerAfterStartNewline(ast));
+			
+			if (ast.hasKind(AS3NodeKind.CLASS))
+				contentState = AS3NodeKind.CLASS;
+			else if (ast.hasKind(AS3NodeKind.INTERFACE))
+				contentState = AS3NodeKind.INTERFACE;
+			else if (ast.hasKind(AS3NodeKind.FUNCTION))
+				contentState = AS3NodeKind.FUNCTION;
 		}
 		
 		var len:int = ast.numChildren;
@@ -225,19 +277,25 @@ public class BuilderFactory
 				}
 				else if (node.isKind(AS3NodeKind.CONST_LIST))
 				{
+					addNewlinesBeforeMembers(node, tokens);
 					buildConstant(node, tokens);
+					addNewlinesAfterMembers(node, tokens);
 					if (i < len - 1)
 						addToken(tokens, newNewLine());
 				}
 				else if (node.isKind(AS3NodeKind.VAR_LIST))
 				{
+					addNewlinesBeforeMembers(node, tokens);
 					buildAttribute(node, tokens);
+					addNewlinesAfterMembers(node, tokens);
 					if (i < len - 1)
 						addToken(tokens, newNewLine());
 				}
 				else if (node.isKind(AS3NodeKind.FUNCTION))
 				{
+					addNewlinesBeforeMembers(node, tokens);
 					buildFunction(node, tokens);
+					addNewlinesAfterMembers(node, tokens);
 					if (i < len - 1)
 						addToken(tokens, newNewLine());
 				}
@@ -339,7 +397,6 @@ public class BuilderFactory
 	private function buildInterface(node:IParserNode, tokens:Vector.<Token>):void
 	{
 		state = AS3NodeKind.INTERFACE;
-		
 		// modifiers
 		buildModList(node, tokens);
 		// interface
@@ -704,10 +761,36 @@ public class BuilderFactory
 	{
 		switch (node.kind)
 		{
-			//case AS3NodeKind.CONTENT:
-			//	lastToken = newNewLine();
-			//	break;
-			
+			case AS3NodeKind.CONTENT:
+				if (breakPackageBracket && contentState == AS3NodeKind.PACKAGE)
+				{
+					lastToken = newNewLine();
+					break;
+				}
+				if (breakTypeBracket 
+					&& (contentState == AS3NodeKind.CLASS 
+						|| contentState == AS3NodeKind.INTERFACE
+					    || contentState == AS3NodeKind.FUNCTION))
+				{
+					lastToken = newNewLine();
+					break;
+				}
+				else
+				{
+					return null;
+				}
+				
+			case AS3NodeKind.BLOCK:
+				if (breakBlockBracket)
+				{
+					lastToken = newNewLine();
+					break;
+				}
+				else
+				{
+					return null;
+				}
+				
 			default:
 				return null;
 		}
@@ -772,11 +855,6 @@ public class BuilderFactory
 	{
 		switch (container.kind)
 		{
-			case AS3NodeKind.PACKAGE:
-				//lastToken = newPackage();
-				//break;
-				return null;
-				
 			case AS3NodeKind.CONTENT:
 			{
 				lastToken = newLeftCurlyBracket();
@@ -847,6 +925,26 @@ public class BuilderFactory
 		}
 		
 		return lastToken;
+	}
+	
+	protected function addNewlinesBeforeMembers(ast:IParserNode, 
+												tokens:Vector.<Token>):void
+	{
+		var len:int = newlinesBeforeMembers;
+		for (var i:int = 0; i < len; i++)
+		{
+			addToken(tokens, newNewLine());
+		}
+	}
+	
+	protected function addNewlinesAfterMembers(ast:IParserNode, 
+											   tokens:Vector.<Token>):void
+	{
+		var len:int = newlinesAfterMembers;
+		for (var i:int = 0; i < len; i++)
+		{
+			addToken(tokens, newNewLine());
+		}
 	}
 	
 	protected function addToken(tokens:Vector.<Token>, token:Token):void

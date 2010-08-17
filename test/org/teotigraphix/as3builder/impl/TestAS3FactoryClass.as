@@ -4,6 +4,7 @@ package org.teotigraphix.as3builder.impl
 import org.teotigraphix.as3nodes.api.IClassTypeNode;
 import org.teotigraphix.as3nodes.api.IMetaDataNode;
 import org.teotigraphix.as3nodes.api.ISourceFile;
+import org.teotigraphix.as3nodes.api.Modifier;
 import org.teotigraphix.as3nodes.impl.IdentifierNode;
 
 public class TestAS3FactoryClass extends TestAS3FactoryBase
@@ -254,6 +255,57 @@ public class TestAS3FactoryClass extends TestAS3FactoryBase
 			"@author Jane Doe\n     * @author John Doe\n     */\n    " +
 			"public class Test {\n        \n    }\n}", 
 			testFile.compilationNode);
+	}
+	
+	[Test]
+	/**
+	 * package my.package 
+	 * {
+	 *     [Bindable]
+	 *     /~~
+	 *      ~ @private 
+	 *      ~/
+	 *     public class Test
+	 *     {
+	 * 
+	 *         public static const MY_CONSTANT:String = "value";
+	 * 
+	 *         public var myAttribute:String = null;
+	 * 
+	 *         public function myMethod():String
+	 *         {
+	 *         }
+	 *     }
+	 * }
+ 	*/
+	public function testMembersConfig():void
+	{
+		var testFile:ISourceFile = project.newClass("my.package.Test");
+		var classType:IClassTypeNode = testFile.compilationNode.typeNode as IClassTypeNode;
+		
+		classType.newDocTag("private");
+		classType.newMetaData("Bindable");
+		classType.newConstant("MY_CONSTANT", Modifier.PUBLIC, IdentifierNode.createType("String"), "\"value\"");
+		classType.newAttribute("myAttribute", Modifier.PUBLIC, IdentifierNode.createType("String"), "null");
+		classType.newMethod("myMethod", Modifier.PUBLIC, IdentifierNode.createType("String"));
+		
+		BuilderFactory.breakPackageBracket = true;
+		BuilderFactory.breakTypeBracket = true;
+		BuilderFactory.breakBlockBracket = true;
+		BuilderFactory.newlinesBeforeMembers = 1;
+		
+		assertBuild("package my.package \n{\n    [Bindable]\n    /**\n     " +
+			"* @private \n     */\n    public class Test \n    {\n        " +
+			"\n        public static const MY_CONSTANT:String = \"value\";\n" +
+			"        \n        public var myAttribute:String = null;\n        " +
+			"\n        public function myMethod():String \n        " +
+			"{\n        }\n    }\n}", 
+			testFile.compilationNode);
+		
+		BuilderFactory.newlinesBeforeMembers = 0;
+		BuilderFactory.breakPackageBracket = false;
+		BuilderFactory.breakTypeBracket = false;
+		BuilderFactory.breakBlockBracket = false;
 	}
 }
 }
