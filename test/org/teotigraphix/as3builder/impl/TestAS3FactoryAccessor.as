@@ -1,5 +1,6 @@
 package org.teotigraphix.as3builder.impl
 {
+
 import org.teotigraphix.as3nodes.api.IAccessorNode;
 import org.teotigraphix.as3nodes.api.ISourceFile;
 import org.teotigraphix.as3nodes.api.ITypeNode;
@@ -13,7 +14,8 @@ public class TestAS3FactoryAccessor extends TestAS3FactoryBase
 	/*
 	* package {
 	*     public class Test {
-	*         public function testMethod():String {
+	*         public function get testProperty():String {
+	*             return null;
 	*         }
 	*     }
 	* }

@@ -28,6 +28,7 @@ import flash.events.EventDispatcher;
 import org.teotigraphix.as3book.api.IAS3Book;
 import org.teotigraphix.as3book.api.IAS3BookAccessor;
 import org.teotigraphix.as3book.api.IAS3BookProcessor;
+import org.teotigraphix.as3nodes.api.Access;
 import org.teotigraphix.as3nodes.api.IAS3SourceFile;
 import org.teotigraphix.as3nodes.api.IAccessorNode;
 import org.teotigraphix.as3nodes.api.IAttributeNode;
@@ -409,13 +410,13 @@ public class AS3Book extends EventDispatcher implements IAS3Book
 				if (setter != null)
 				{
 					access = "read-write";
-					getter.access = access;
-					setter.access = access;
+					getter.access = Access.READ_WRITE;
+					setter.access = Access.READ_WRITE;
 				}
 				else
 				{
 					access = "read";
-					getter.access = access;
+					getter.access = Access.READ;
 				}
 				
 				for each (element in getter.modifiers) 
@@ -443,7 +444,7 @@ public class AS3Book extends EventDispatcher implements IAS3Book
 				if (!setter.isReadWrite)
 				{
 					access = "write";
-					setter.access = access;
+					setter.access = Access.WRITE;
 					
 					// need to take the param type and put it into setType()
 					var parameter:IParameterNode = setter.parameters[0];

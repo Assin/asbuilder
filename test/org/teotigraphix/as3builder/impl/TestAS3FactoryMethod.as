@@ -265,7 +265,7 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 		
 		var method:IMethodNode = typeNode.newMethod(
 			"testMethod", Modifier.PUBLIC, IdentifierNode.createType("String"));
-		var param:IParameterNode = method.addParameter("arg0", IdentifierNode.createType("String"));
+		var param:IParameterNode = method.newParameter("arg0", IdentifierNode.createType("String"));
 		//method.description = "A test method.\n <p>Long description.</p>";
 		//method.addDocTag("since", "1.0");
 		param.description = "An argument at 0";
@@ -303,7 +303,7 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 		
 		var method:IMethodNode = typeNode.newMethod(
 			"testMethod", Modifier.PUBLIC, IdentifierNode.createType("String"));
-		var param:IParameterNode = method.addParameter("arg0", IdentifierNode.createType("String"));
+		var param:IParameterNode = method.newParameter("arg0", IdentifierNode.createType("String"));
 		method.description = "A test method.\n <p>Long description.</p>";
 		method.newDocTag("since", "1.0");
 		param.description = "An argument at 0";
@@ -431,7 +431,7 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 		
 		var method:IMethodNode = typeNode.newMethod(
 			"testMethod", Modifier.PUBLIC, IdentifierNode.createType("String"));
-		var param:IParameterNode = method.addParameter("arg0", IdentifierNode.createType("String"));
+		var param:IParameterNode = method.newParameter("arg0", IdentifierNode.createType("String"));
 		
 		assertBuild("package {\n    public class Test {\n        public function " +
 			"testMethod(arg0:String):String {\n        }\n    }\n}", 
@@ -454,9 +454,9 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 		
 		var method1:IMethodNode = typeNode.newMethod(
 			"testMethod", Modifier.PUBLIC, IdentifierNode.createType("String"));
-		method1.addParameter("arg0", IdentifierNode.createType("String"));
-		method1.addParameter("arg1", IdentifierNode.createType("int"));
-		method1.addRestParameter("arg2");
+		method1.newParameter("arg0", IdentifierNode.createType("String"));
+		method1.newParameter("arg1", IdentifierNode.createType("int"));
+		method1.newRestParameter("arg2");
 		
 		assertBuild("package {\n    public class Test {\n        public function " +
 			"testMethod(arg0:String, arg1:int, ...arg2):String {\n        }\n    }\n}", 
@@ -478,9 +478,9 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 		
 		var method:IMethodNode = typeNode.newMethod(
 			"testMethod", Modifier.PUBLIC, IdentifierNode.createType("String"));
-		method.addParameter("arg0", IdentifierNode.createType("String"));
-		method.addParameter("arg1", IdentifierNode.createType("int"));
-		method.addRestParameter("arg2");
+		method.newParameter("arg0", IdentifierNode.createType("String"));
+		method.newParameter("arg1", IdentifierNode.createType("int"));
+		method.newRestParameter("arg2");
 		
 		assertBuild("package {\n    public interface ITest {\n        " +
 			"function testMethod(arg0:String, arg1:int, ...arg2):String;\n    }\n}", 
@@ -503,7 +503,7 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 		
 		var method1:IMethodNode = typeNode.newMethod(
 			"testMethod", Modifier.PUBLIC, IdentifierNode.createType("String"));
-		method1.addParameter("arg0", IdentifierNode.createType("String"), "''");
+		method1.newParameter("arg0", IdentifierNode.createType("String"), "''");
 		
 		assertBuild("package {\n    public class Test {\n        public function " +
 			"testMethod(arg0:String = ''):String {\n        }\n    }\n}", 
