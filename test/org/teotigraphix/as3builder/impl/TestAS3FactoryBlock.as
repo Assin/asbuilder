@@ -1,11 +1,9 @@
 package org.teotigraphix.as3builder.impl
 {
 
-import org.teotigraphix.as3blocks.api.IExpressionNode;
 import org.teotigraphix.as3nodes.api.IMethodNode;
 import org.teotigraphix.as3nodes.api.ISourceFile;
 import org.teotigraphix.as3nodes.api.ITypeNode;
-import org.teotigraphix.as3blocks.api.IfStatementNode;
 import org.teotigraphix.as3nodes.api.Modifier;
 import org.teotigraphix.as3nodes.impl.IdentifierNode;
 
@@ -30,7 +28,7 @@ public class TestAS3FactoryBlock extends TestAS3FactoryBase
 			"testMethod", Modifier.PUBLIC, IdentifierNode.createType("String"));
 		
 		
-		var expr:IExpressionNode// = method.newIf("test()");
+		//var expr:IExpressionNode// = method.newIf("test()");
 		
 		//var ifStatement:IfStatementNode = method.newIf(expr);
 		//ifStatement.addStatement("trace('test succeeded')");
