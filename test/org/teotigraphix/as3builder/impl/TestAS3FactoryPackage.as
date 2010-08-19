@@ -85,13 +85,14 @@ public class TestAS3FactoryPackage extends TestAS3FactoryBase
 	 *     import my.other.Class;
 	 *     import my.IInterface;
 	 *     import my.other.thing.over.There;
-	 *     public function MyClass():void {
+	 *     public class MyClass {
+	 *         
 	 *     }
 	 * }
 	*/
 	public function testTypeImports():void
 	{
-		var file:ISourceFile = project.newFunction("my.domain.MyClass");
+		var file:ISourceFile = project.newClass("my.domain.MyClass");
 		var packageNode:IPackageNode = file.compilationNode.packageNode;
 		var typeNode:ITypeNode = file.compilationNode.typeNode;
 		
@@ -101,7 +102,57 @@ public class TestAS3FactoryPackage extends TestAS3FactoryBase
 		
 		assertBuild("package my.domain {\n    import my.other.Class;\n    " +
 			"import my.IInterface;\n    import my.other.thing.over.There;\n    " +
-			"public function MyClass():void {\n    }\n}", 
+			"public class MyClass {\n        \n    }\n}", 
+			file.compilationNode);
+	}
+	
+	[Test]
+	/*
+	 * package my.domain {
+	 *     include '../my/include/File.as'
+	 *     include '../my/other/include/File.as'
+	 *     public class MyClass {
+ 	 *        
+	 *     }
+	 * }
+	*/
+	public function testTypeIncludes():void
+	{
+		var file:ISourceFile = project.newClass("my.domain.MyClass");
+		var packageNode:IPackageNode = file.compilationNode.packageNode;
+		var typeNode:ITypeNode = file.compilationNode.typeNode;
+		
+		packageNode.newInclude("../my/include/File.as");
+		packageNode.newInclude("../my/other/include/File.as");
+		
+		assertBuild("package my.domain {\n    include '../my/include/File.as'\n    " +
+			"include '../my/other/include/File.as'\n    public class MyClass {\n" +
+			"        \n    }\n}", 
+			file.compilationNode);
+	}
+	
+	[Test]
+	/*
+	 * package my.domain {
+	 *     use namespace mx_internal;
+	 *     use namespace flash_proxy;
+	 *     public class MyClass {
+	 *         
+	 *     }
+	 * }
+	 */
+	public function testTypeUses():void
+	{
+		var file:ISourceFile = project.newClass("my.domain.MyClass");
+		var packageNode:IPackageNode = file.compilationNode.packageNode;
+		var typeNode:ITypeNode = file.compilationNode.typeNode;
+		
+		packageNode.newUse("mx_internal");
+		packageNode.newUse("flash_proxy");
+		
+		assertBuild("package my.domain {\n    use namespace mx_internal;\n    " +
+			"use namespace flash_proxy;\n    public class MyClass {\n        " +
+			"\n    }\n}", 
 			file.compilationNode);
 	}
 }

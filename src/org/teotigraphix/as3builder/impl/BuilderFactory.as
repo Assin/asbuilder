@@ -271,6 +271,14 @@ public class BuilderFactory
 				{
 					buildImport(node, tokens);
 				}
+				else if (node.isKind(AS3NodeKind.INCLUDE))
+				{
+					buildInclude(node, tokens);
+				}
+				else if (node.isKind(AS3NodeKind.USE))
+				{
+					buildUse(node, tokens);
+				}
 				else if (node.isKind(AS3NodeKind.CLASS))
 				{
 					buildClassType(node, tokens);
@@ -509,6 +517,33 @@ public class BuilderFactory
 	private function buildImport(node:IParserNode, tokens:Vector.<Token>):void
 	{
 		addToken(tokens, newToken("import"));
+		addToken(tokens, newSpace());
+		addToken(tokens, newToken(node.stringValue));
+		addToken(tokens, newSemiColumn());
+		addToken(tokens, newNewLine());
+	}
+	
+	/**
+	 * node is (include)
+	 */
+	private function buildInclude(node:IParserNode, tokens:Vector.<Token>):void
+	{
+		addToken(tokens, newToken("include"));
+		addToken(tokens, newSpace());
+		addToken(tokens, newToken("'"));
+		addToken(tokens, newToken(node.stringValue));
+		addToken(tokens, newToken("'"));
+		addToken(tokens, newNewLine());
+	}
+	
+	/**
+	 * node is (use)
+	 */
+	private function buildUse(node:IParserNode, tokens:Vector.<Token>):void
+	{
+		addToken(tokens, newToken("use"));
+		addToken(tokens, newSpace());
+		addToken(tokens, newToken("namespace"));
 		addToken(tokens, newSpace());
 		addToken(tokens, newToken(node.stringValue));
 		addToken(tokens, newSemiColumn());
