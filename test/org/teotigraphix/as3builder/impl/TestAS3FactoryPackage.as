@@ -9,6 +9,28 @@ public class TestAS3FactoryPackage extends TestAS3FactoryBase
 {
 	[Test]
 	/*
+	 * /~~
+	 *  ~ This is a package level block comment.
+	 *  ~/
+	 * package my.domain {
+	 *     public class MyClass {
+	 *         
+	 *     }
+	 * }
+	*/
+	public function testBlockComment():void
+	{
+		var file:ISourceFile = project.newClass("my.domain.MyClass");
+		var typeNode:ITypeNode = file.compilationNode.typeNode;
+		file.compilationNode.packageNode.newBlockComment("This is a package level block comment.", false);
+		
+		assertBuild("/**\n * This is a package level block comment.\n */" +
+			"\npackage my.domain {\n    public class MyClass {\n        \n    }\n}", 
+			file.compilationNode);
+	}
+	
+	[Test]
+	/*
 	* package my.domain {
 	*     public class Test {
 	*         
@@ -17,10 +39,10 @@ public class TestAS3FactoryPackage extends TestAS3FactoryBase
 	*/
 	public function testClass():void
 	{
-		var file:ISourceFile = project.newClass("my.domain.Test");
+		var file:ISourceFile = project.newClass("my.domain.MyClass");
 		var typeNode:ITypeNode = file.compilationNode.typeNode;
 		
-		assertBuild("package my.domain {\n    public class Test {\n        \n    }\n}", 
+		assertBuild("package my.domain {\n    public class MyClass {\n        \n    }\n}", 
 			file.compilationNode);
 	}
 	

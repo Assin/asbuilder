@@ -370,6 +370,8 @@ public class BuilderFactory
 	 */
 	private function buildPackage(node:IParserNode, tokens:Vector.<Token>):void
 	{
+		// block-doc
+		buildBlockDoc(node, tokens);
 		// package
 		addToken(tokens, newPackage());
 		addToken(tokens, newSpace());
@@ -803,6 +805,24 @@ public class BuilderFactory
 					addToken(tokens, newToken(" * "));
 			}
 		}
+		addToken(tokens, newToken(" */"));
+		addToken(tokens, newNewLine());
+	}
+	
+	/**
+	 * node is (package)
+	 */
+	private function buildBlockDoc(node:IParserNode, tokens:Vector.<Token>):void
+	{
+		var blockDoc:IParserNode = node.getKind(AS3NodeKind.BLOCK_DOC);
+		if (!blockDoc)
+			return;
+		
+		addToken(tokens, newToken("/**"));
+		addToken(tokens, newNewLine());
+		addToken(tokens, newToken(" * "));
+		addToken(tokens, newToken(blockDoc.stringValue));
+		addToken(tokens, newNewLine());
 		addToken(tokens, newToken(" */"));
 		addToken(tokens, newNewLine());
 	}
