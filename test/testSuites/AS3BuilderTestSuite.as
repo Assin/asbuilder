@@ -8,6 +8,7 @@ import org.teotigraphix.as3builder.impl.TestAS3FactoryClass;
 import org.teotigraphix.as3builder.impl.TestAS3FactoryConstant;
 import org.teotigraphix.as3builder.impl.TestAS3FactoryInterface;
 import org.teotigraphix.as3builder.impl.TestAS3FactoryMethod;
+import org.teotigraphix.as3builder.impl.TestAS3FactoryPackage;
 
 [Suite]
 [RunWith("org.flexunit.runners.Suite")]
@@ -15,6 +16,7 @@ import org.teotigraphix.as3builder.impl.TestAS3FactoryMethod;
 public class AS3BuilderTestSuite
 {
 	//public var testAS3Factory:TestAS3Factory;
+	public var testAS3FactoryPackage:TestAS3FactoryPackage;
 	public var testAS3FactoryClass:TestAS3FactoryClass;
 	public var testAS3FactoryInterface:TestAS3FactoryInterface;
 	public var testAS3FactoryConstant:TestAS3FactoryConstant;

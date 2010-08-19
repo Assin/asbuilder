@@ -269,11 +269,15 @@ public class BuilderFactory
 				}
 				else if (node.isKind(AS3NodeKind.CLASS))
 				{
-					buildClass(node, tokens);
+					buildClassType(node, tokens);
 				}
 				else if (node.isKind(AS3NodeKind.INTERFACE))
 				{
-					buildInterface(node, tokens);
+					buildInterfaceType(node, tokens);
+				}
+				else if (node.isKind(AS3NodeKind.FUNCTION) && state == AS3NodeKind.PACKAGE)
+				{
+					buildFunctionType(node, tokens);
 				}
 				else if (node.isKind(AS3NodeKind.CONST_LIST))
 				{
@@ -380,7 +384,7 @@ public class BuilderFactory
 	/**
 	 * node is (class)
 	 */
-	private function buildClass(node:IParserNode, tokens:Vector.<Token>):void
+	private function buildClassType(node:IParserNode, tokens:Vector.<Token>):void
 	{
 		state = AS3NodeKind.CLASS;
 		// meta-list
@@ -429,7 +433,7 @@ public class BuilderFactory
 	/**
 	 * node is (interface)
 	 */
-	private function buildInterface(node:IParserNode, tokens:Vector.<Token>):void
+	private function buildInterfaceType(node:IParserNode, tokens:Vector.<Token>):void
 	{
 		state = AS3NodeKind.INTERFACE;
 		// modifiers
@@ -460,6 +464,37 @@ public class BuilderFactory
 		// content
 		var content:IParserNode = ASTUtil.getNode(AS3NodeKind.CONTENT, node);
 		build(content, tokens);
+	}
+	
+	/**
+	 * node is (function) in package
+	 */
+	private function buildFunctionType(node:IParserNode, tokens:Vector.<Token>):void
+	{
+		// as-doc
+		buildAsDoc(node, tokens);
+		// mod-list
+		buildModList(node, tokens);
+		// function
+		addToken(tokens, newToken(KeyWords.FUNCTION));
+		addToken(tokens, newSpace());
+		// name
+		var name:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME, node);
+		addToken(tokens, newToken(name.stringValue));
+		// param-list
+		buildParamList(node, tokens);
+		// returnType
+		var returnType:IParserNode = ASTUtil.getNode(AS3NodeKind.TYPE, node);
+		if (returnType)
+		{
+			addToken(tokens, newColumn());
+			addToken(tokens, newToken(returnType.stringValue));
+		}
+		
+		addToken(tokens, newSpace());
+		// block
+		var block:IParserNode = ASTUtil.getNode(AS3NodeKind.BLOCK, node);
+		build(block, tokens);
 	}
 	
 	/**
@@ -599,54 +634,8 @@ public class BuilderFactory
 		// name
 		var name:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME, node);
 		addToken(tokens, newToken(name.stringValue));
-		// parameters
-		addToken(tokens, newLeftParenthesis());
-		var parameterList:IParserNode = ASTUtil.getNode(AS3NodeKind.PARAMETER_LIST, node);
-		if (parameterList)
-		{
-			var len:int = parameterList.numChildren;
-			for (var i:int = 0; i < len; i++)
-			{
-				var param:IParserNode = parameterList.children[i] as IParserNode;
-				var nti:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME_TYPE_INIT, param);
-				var rest:IParserNode = ASTUtil.getNode(AS3NodeKind.REST, param);
-				if (nti)
-				{
-					var nameNode:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME, nti);
-					var typeNode:IParserNode = ASTUtil.getNode(AS3NodeKind.TYPE, nti);
-					var initNode:IParserNode = ASTUtil.getNode(AS3NodeKind.INIT, nti);
-					if (nameNode)
-					{
-						addToken(tokens, newToken(nameNode.stringValue));
-					}
-					if (typeNode)
-					{
-						addToken(tokens, newColumn());
-						addToken(tokens, newToken(typeNode.stringValue));
-					}
-					if (initNode)
-					{
-						var primary:IParserNode = initNode.getChild(0);
-						addToken(tokens, newSpace());
-						addToken(tokens, newEquals());
-						addToken(tokens, newSpace());
-						addToken(tokens, newToken(primary.stringValue));
-					}
-				}
-				else if (rest)
-				{
-					addToken(tokens, newRestParameters());
-					addToken(tokens, newToken(rest.stringValue));
-				}
-				
-				if (i < len - 1)
-				{
-					addToken(tokens, newComma());
-					addToken(tokens, newSpace());
-				}
-			}
-		}
-		addToken(tokens, newRightParenthesis());
+		// param-list
+		buildParamList(node, tokens);
 		// returnType
 		var returnType:IParserNode = ASTUtil.getNode(AS3NodeKind.TYPE, node);
 		if (returnType)
@@ -685,54 +674,8 @@ public class BuilderFactory
 		// name
 		var name:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME, node);
 		addToken(tokens, newToken(name.stringValue));
-		// parameters
-		addToken(tokens, newLeftParenthesis());
-		var parameterList:IParserNode = ASTUtil.getNode(AS3NodeKind.PARAMETER_LIST, node);
-		if (parameterList)
-		{
-			var len:int = parameterList.numChildren;
-			for (var i:int = 0; i < len; i++)
-			{
-				var param:IParserNode = parameterList.children[i] as IParserNode;
-				var nti:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME_TYPE_INIT, param);
-				var rest:IParserNode = ASTUtil.getNode(AS3NodeKind.REST, param);
-				if (nti)
-				{
-					var nameNode:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME, nti);
-					var typeNode:IParserNode = ASTUtil.getNode(AS3NodeKind.TYPE, nti);
-					var initNode:IParserNode = ASTUtil.getNode(AS3NodeKind.INIT, nti);
-					if (nameNode)
-					{
-						addToken(tokens, newToken(nameNode.stringValue));
-					}
-					if (typeNode)
-					{
-						addToken(tokens, newColumn());
-						addToken(tokens, newToken(typeNode.stringValue));
-					}
-					if (initNode)
-					{
-						var primary:IParserNode = initNode.getChild(0);
-						addToken(tokens, newSpace());
-						addToken(tokens, newEquals());
-						addToken(tokens, newSpace());
-						addToken(tokens, newToken(primary.stringValue));
-					}
-				}
-				else if (rest)
-				{
-					addToken(tokens, newRestParameters());
-					addToken(tokens, newToken(rest.stringValue));
-				}
-				
-				if (i < len - 1)
-				{
-					addToken(tokens, newComma());
-					addToken(tokens, newSpace());
-				}
-			}
-		}
-		addToken(tokens, newRightParenthesis());
+		// param-list
+		buildParamList(node, tokens);
 		// returnType
 		var returnType:IParserNode = ASTUtil.getNode(AS3NodeKind.TYPE, node);
 		if (returnType)
@@ -927,6 +870,60 @@ public class BuilderFactory
 				addToken(tokens, newSpace());
 			}
 		}
+	}
+	
+	/**
+	 * node is (function)
+	 */
+	private function buildParamList(node:IParserNode, tokens:Vector.<Token>):void
+	{
+		addToken(tokens, newLeftParenthesis());
+		var parameterList:IParserNode = ASTUtil.getNode(AS3NodeKind.PARAMETER_LIST, node);
+		if (parameterList)
+		{
+			var len:int = parameterList.numChildren;
+			for (var i:int = 0; i < len; i++)
+			{
+				var param:IParserNode = parameterList.children[i] as IParserNode;
+				var nti:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME_TYPE_INIT, param);
+				var rest:IParserNode = ASTUtil.getNode(AS3NodeKind.REST, param);
+				if (nti)
+				{
+					var nameNode:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME, nti);
+					var typeNode:IParserNode = ASTUtil.getNode(AS3NodeKind.TYPE, nti);
+					var initNode:IParserNode = ASTUtil.getNode(AS3NodeKind.INIT, nti);
+					if (nameNode)
+					{
+						addToken(tokens, newToken(nameNode.stringValue));
+					}
+					if (typeNode)
+					{
+						addToken(tokens, newColumn());
+						addToken(tokens, newToken(typeNode.stringValue));
+					}
+					if (initNode)
+					{
+						var primary:IParserNode = initNode.getChild(0);
+						addToken(tokens, newSpace());
+						addToken(tokens, newEquals());
+						addToken(tokens, newSpace());
+						addToken(tokens, newToken(primary.stringValue));
+					}
+				}
+				else if (rest)
+				{
+					addToken(tokens, newRestParameters());
+					addToken(tokens, newToken(rest.stringValue));
+				}
+				
+				if (i < len - 1)
+				{
+					addToken(tokens, newComma());
+					addToken(tokens, newSpace());
+				}
+			}
+		}
+		addToken(tokens, newRightParenthesis());
 	}
 	
 	protected function buildContainerAfterStartNewline(node:IParserNode):Token
