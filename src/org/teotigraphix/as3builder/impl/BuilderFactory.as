@@ -267,6 +267,10 @@ public class BuilderFactory
 				{
 					buildPackage(node, tokens);
 				}
+				else if (node.isKind(AS3NodeKind.IMPORT))
+				{
+					buildImport(node, tokens);
+				}
 				else if (node.isKind(AS3NodeKind.CLASS))
 				{
 					buildClassType(node, tokens);
@@ -495,6 +499,18 @@ public class BuilderFactory
 		// block
 		var block:IParserNode = ASTUtil.getNode(AS3NodeKind.BLOCK, node);
 		build(block, tokens);
+	}
+	
+	/**
+	 * node is (import)
+	 */
+	private function buildImport(node:IParserNode, tokens:Vector.<Token>):void
+	{
+		addToken(tokens, newToken("import"));
+		addToken(tokens, newSpace());
+		addToken(tokens, newToken(node.stringValue));
+		addToken(tokens, newSemiColumn());
+		addToken(tokens, newNewLine());
 	}
 	
 	/**
