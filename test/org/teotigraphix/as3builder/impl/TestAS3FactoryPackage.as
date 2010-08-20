@@ -288,7 +288,7 @@ public class TestAS3FactoryPackage extends TestAS3FactoryBase
 			"[Test]public function testMethod3():void{}" +
 			"}}"
 		
-		var file:AS3SourceFile = new AS3SourceFile(null, new SourceCode(code, "", ""));
+		var file:AS3SourceFile = new AS3SourceFile(new SourceCode(code, ""));
 		file.buildAst();
 		
 		var typeNode:ITypeNode = file.compilationNode.typeNode;

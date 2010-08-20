@@ -282,7 +282,7 @@ public class AS3Book extends EventDispatcher implements IAS3Book
 		if (!sourceFilePackage)
 		{
 			sourceFilePackage = new SourceFilePackage(
-				sourceFile.fileName, sourceFile.packageName);
+				sourceFile.filePath, sourceFile.packageName);
 			sourceFilePackages.push(sourceFilePackage);
 		}
 		

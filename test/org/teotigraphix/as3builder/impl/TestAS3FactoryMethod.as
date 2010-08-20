@@ -40,7 +40,7 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 			];
 		
 		var sourceNode:SourceFile = new AS3SourceFile(
-			null, new SourceCode(lines.join("\n"), "", ""));
+			new SourceCode(lines.join("\n"), ""));
 		sourceNode.buildAst();
 		
 		assertBuild("package {\n    public class Test {\n        public function " +
@@ -56,7 +56,7 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 			"public function testMethod2(arg0:String = null):int{}}}";
 		
 		var sourceNode:SourceFile = new AS3SourceFile(
-			null, new SourceCode(code, "", ""));
+			new SourceCode(code, ""));
 		sourceNode.buildAst();
 		
 		assertBuild("package my.domain {\n    public dynamic class Test {\n        " +
@@ -71,7 +71,7 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 			"public function testMethod3(arg0:String = null, ...rest):Test{}}}";
 		
 		sourceNode = new AS3SourceFile(
-			null, new SourceCode(code, "", ""));
+			new SourceCode(code, ""));
 		sourceNode.buildAst();
 		
 		assertBuild("package my.domain {\n    public dynamic class Test {\n        " +
