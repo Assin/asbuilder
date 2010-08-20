@@ -26,7 +26,7 @@ public class TestAS3FactoryBase
 	
 	protected function assertBuild(text:String, compilationNode:ICompilationNode):void
 	{
-		var result:String = BuilderFactory.instance.buildTest(compilationNode.node);
+		var result:String = BuilderFactory.instance.build(compilationNode.node);
 		Assert.assertEquals(text, result);
 	}
 }
