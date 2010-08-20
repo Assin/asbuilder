@@ -68,7 +68,7 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 		code = "package my.domain{public dynamic class Test{ " +
 			"public function testMethod1():String{}" +
 			"public function testMethod2(arg0:String = null):int{}" +
-			"public function testMethod3(arg0:String = null, ...rest):my.domain.Test{}}}";
+			"public function testMethod3(arg0:String = null, ...rest):Test{}}}";
 		
 		sourceNode = new AS3SourceFile(
 			null, new SourceCode(code, "", ""));
@@ -77,7 +77,7 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 		assertBuild("package my.domain {\n    public dynamic class Test {\n        " +
 			"public function testMethod1():String {\n        }\n        " +
 			"public function testMethod2(arg0:String = null):int {\n        }\n        " +
-			"public function testMethod3(arg0:String = null, ...rest):my.domain.Test " +
+			"public function testMethod3(arg0:String = null, ...rest):Test " +
 			"{\n        }\n    }\n}", 
 			sourceNode.compilationNode);
 		
@@ -89,7 +89,7 @@ public class TestAS3FactoryMethod extends TestAS3FactoryBase
 		
 		assertBuild("package my.domain {\n    public dynamic class Test {\n        " +
 			"public function testMethod1():String {\n        }\n        " +
-			"public function testMethod3(arg0:String = null, ...rest):my.domain.Test " +
+			"public function testMethod3(arg0:String = null, ...rest):Test " +
 			"{\n        }\n    }\n}", 
 			sourceNode.compilationNode);
 		

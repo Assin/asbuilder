@@ -629,6 +629,8 @@ public class BuilderFactory
 	 */
 	private function buildGetter(node:IParserNode, tokens:Vector.<Token>):void
 	{
+		// meta-list
+		buildMetaList(node, tokens);
 		// as-doc
 		buildAsDoc(node, tokens);
 		if (state == AS3NodeKind.CLASS)
@@ -672,6 +674,8 @@ public class BuilderFactory
 	 */
 	private function buildSetter(node:IParserNode, tokens:Vector.<Token>):void
 	{
+		// meta-list
+		buildMetaList(node, tokens);
 		// as-doc
 		buildAsDoc(node, tokens);
 		if (state == AS3NodeKind.CLASS)
@@ -714,6 +718,8 @@ public class BuilderFactory
 	 */
 	private function buildFunction(node:IParserNode, tokens:Vector.<Token>):void
 	{
+		// meta-list
+		buildMetaList(node, tokens);
 		// as-doc
 		buildAsDoc(node, tokens);
 		if (state == AS3NodeKind.CLASS)
@@ -895,7 +901,15 @@ public class BuilderFactory
 		for (var i:int = 0; i < len; i++)
 		{
 			var child:IParserNode = metaList.children[i];
+			// as-doc
+			buildAsDoc(child, tokens);
+			// meta
 			var name:IParserNode = ASTUtil.getNode(AS3NodeKind.NAME, child);
+			// FIXME 
+			if (!name)
+			{
+				name = child;
+			}
 			addToken(tokens, newLeftSquareBracket());
 			addToken(tokens, newToken(name.stringValue));
 			var paramList:IParserNode = ASTUtil.getNode(AS3NodeKind.PARAMETER_LIST, child);
