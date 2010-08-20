@@ -41,8 +41,8 @@ import org.teotigraphix.as3nodes.api.ISourceFile;
 import org.teotigraphix.as3parser.api.AS3NodeKind;
 import org.teotigraphix.as3parser.api.ASDocNodeKind;
 import org.teotigraphix.as3parser.api.IParserNode;
+import org.teotigraphix.as3parser.api.IToken;
 import org.teotigraphix.as3parser.api.KeyWords;
-import org.teotigraphix.as3parser.core.Token;
 import org.teotigraphix.as3parser.utils.ASTUtil;
 
 /**
@@ -81,7 +81,7 @@ public class BuilderFactory
 	/**
 	 * @private
 	 */
-	private var lastToken:Token;
+	private var lastToken:IToken;
 	
 	//--------------------------------------------------------------------------
 	//
@@ -219,9 +219,9 @@ public class BuilderFactory
 		
 		factory.reset();
 		
-		var tokens:Vector.<Token> = buildNodes(ast);
+		var tokens:Vector.<IToken> = buildNodes(ast);
 		
-		for each (var token:Token in tokens)
+		for each (var token:IToken in tokens)
 		{
 			sb += token.text;
 		}
@@ -241,12 +241,12 @@ public class BuilderFactory
 	}
 	
 	/**
-	 * Builds a Token Vector representation of the AST found in the source file.
+	 * Builds a IToken Vector representation of the AST found in the source file.
 	 * 
 	 * @param file An ISourceFile containing complete AST to build.
 	 * @return A Vector full of Tokenized AST mirroring the source code.
 	 */
-	public function buildTokens(file:ISourceFile):Vector.<Token>
+	public function buildTokens(file:ISourceFile):Vector.<IToken>
 	{
 		var ast:IParserNode = file.compilationNode.node;
 		
@@ -260,7 +260,7 @@ public class BuilderFactory
 		
 		factory.reset();
 		
-		var tokens:Vector.<Token> = buildNodes(ast);
+		var tokens:Vector.<IToken> = buildNodes(ast);
 		
 		return tokens;
 	}
@@ -269,12 +269,12 @@ public class BuilderFactory
 	 * @private
 	 */	
 	protected function buildNodes(ast:IParserNode, 
-								  tokens:Vector.<Token> = null):Vector.<Token>
+								  tokens:Vector.<IToken> = null):Vector.<IToken>
 	{
 		state = ast.kind;
 		
 		if (tokens == null)
-			tokens = new Vector.<Token>();
+			tokens = new Vector.<IToken>();
 		
 		if (state != AS3NodeKind.COMPILATION_UNIT)
 		{
@@ -410,7 +410,7 @@ public class BuilderFactory
 	/**
 	 * node is (package)
 	 */
-	protected function buildPackage(node:IParserNode, tokens:Vector.<Token>):void
+	protected function buildPackage(node:IParserNode, tokens:Vector.<IToken>):void
 	{
 		// block-doc
 		buildBlockDoc(node, tokens);
@@ -432,7 +432,7 @@ public class BuilderFactory
 	/**
 	 * node is (class)
 	 */
-	protected function buildClassType(node:IParserNode, tokens:Vector.<Token>):void
+	protected function buildClassType(node:IParserNode, tokens:Vector.<IToken>):void
 	{
 		state = AS3NodeKind.CLASS;
 		// meta-list
@@ -481,7 +481,7 @@ public class BuilderFactory
 	/**
 	 * node is (interface)
 	 */
-	protected function buildInterfaceType(node:IParserNode, tokens:Vector.<Token>):void
+	protected function buildInterfaceType(node:IParserNode, tokens:Vector.<IToken>):void
 	{
 		state = AS3NodeKind.INTERFACE;
 		// modifiers
@@ -517,7 +517,7 @@ public class BuilderFactory
 	/**
 	 * node is (function) in package
 	 */
-	protected function buildFunctionType(node:IParserNode, tokens:Vector.<Token>):void
+	protected function buildFunctionType(node:IParserNode, tokens:Vector.<IToken>):void
 	{
 		// as-doc
 		buildAsDoc(node, tokens);
@@ -548,7 +548,7 @@ public class BuilderFactory
 	/**
 	 * node is (import)
 	 */
-	protected function buildImport(node:IParserNode, tokens:Vector.<Token>):void
+	protected function buildImport(node:IParserNode, tokens:Vector.<IToken>):void
 	{
 		addToken(tokens, factory.newImport());
 		addToken(tokens, factory.newSpace());
@@ -560,7 +560,7 @@ public class BuilderFactory
 	/**
 	 * node is (include)
 	 */
-	protected function buildInclude(node:IParserNode, tokens:Vector.<Token>):void
+	protected function buildInclude(node:IParserNode, tokens:Vector.<IToken>):void
 	{
 		addToken(tokens, factory.newInclude());
 		addToken(tokens, factory.newSpace());
@@ -573,7 +573,7 @@ public class BuilderFactory
 	/**
 	 * node is (use)
 	 */
-	protected function buildUse(node:IParserNode, tokens:Vector.<Token>):void
+	protected function buildUse(node:IParserNode, tokens:Vector.<IToken>):void
 	{
 		addToken(tokens, factory.newUse());
 		addToken(tokens, factory.newSpace());
@@ -587,7 +587,7 @@ public class BuilderFactory
 	/**
 	 * node is (const)
 	 */
-	protected function buildConstant(node:IParserNode, tokens:Vector.<Token>):void
+	protected function buildConstant(node:IParserNode, tokens:Vector.<IToken>):void
 	{
 		// meta-list
 		buildMetaList(node, tokens);
@@ -624,7 +624,7 @@ public class BuilderFactory
 	/**
 	 * node is (var)
 	 */
-	protected function buildAttribute(node:IParserNode, tokens:Vector.<Token>):void
+	protected function buildAttribute(node:IParserNode, tokens:Vector.<IToken>):void
 	{
 		// meta-list
 		buildMetaList(node, tokens);
@@ -661,7 +661,7 @@ public class BuilderFactory
 	/**
 	 * node is (get)
 	 */
-	protected function buildGetter(node:IParserNode, tokens:Vector.<Token>):void
+	protected function buildGetter(node:IParserNode, tokens:Vector.<IToken>):void
 	{
 		// meta-list
 		buildMetaList(node, tokens);
@@ -706,7 +706,7 @@ public class BuilderFactory
 	/**
 	 * node is (set)
 	 */
-	protected function buildSetter(node:IParserNode, tokens:Vector.<Token>):void
+	protected function buildSetter(node:IParserNode, tokens:Vector.<IToken>):void
 	{
 		// meta-list
 		buildMetaList(node, tokens);
@@ -750,7 +750,7 @@ public class BuilderFactory
 	/**
 	 * node is (function)
 	 */
-	protected function buildFunction(node:IParserNode, tokens:Vector.<Token>):void
+	protected function buildFunction(node:IParserNode, tokens:Vector.<IToken>):void
 	{
 		// meta-list
 		buildMetaList(node, tokens);
@@ -792,7 +792,7 @@ public class BuilderFactory
 	/**
 	 * node is (block)
 	 */
-	protected function buildBlock(node:IParserNode, tokens:Vector.<Token>):void
+	protected function buildBlock(node:IParserNode, tokens:Vector.<IToken>):void
 	{
 		
 		var len:int = node.numChildren;
@@ -813,7 +813,7 @@ public class BuilderFactory
 	/**
 	 * node is (class|interface|function)
 	 */
-	protected function buildAsDoc(node:IParserNode, tokens:Vector.<Token>):void
+	protected function buildAsDoc(node:IParserNode, tokens:Vector.<IToken>):void
 	{
 		if (!hasComment(node))
 			return;
@@ -887,7 +887,7 @@ public class BuilderFactory
 	/**
 	 * node is (package)
 	 */
-	protected function buildBlockDoc(node:IParserNode, tokens:Vector.<Token>):void
+	protected function buildBlockDoc(node:IParserNode, tokens:Vector.<IToken>):void
 	{
 		var blockDoc:IParserNode = node.getKind(AS3NodeKind.BLOCK_DOC);
 		if (!blockDoc)
@@ -925,7 +925,7 @@ public class BuilderFactory
 	/**
 	 * node is (class|interface|function)
 	 */
-	protected function buildMetaList(node:IParserNode, tokens:Vector.<Token>):void
+	protected function buildMetaList(node:IParserNode, tokens:Vector.<IToken>):void
 	{
 		var metaList:IParserNode = ASTUtil.getNode(AS3NodeKind.META_LIST, node);
 		if (!metaList || metaList.numChildren == 0)
@@ -978,7 +978,7 @@ public class BuilderFactory
 	/**
 	 * node is (class|interface|function)
 	 */
-	protected function buildModList(node:IParserNode, tokens:Vector.<Token>):void
+	protected function buildModList(node:IParserNode, tokens:Vector.<IToken>):void
 	{
 		var mods:IParserNode = ASTUtil.getNode(AS3NodeKind.MOD_LIST, node);
 		if (mods && mods.numChildren > 0)
@@ -994,7 +994,7 @@ public class BuilderFactory
 	/**
 	 * node is (function)
 	 */
-	protected function buildParamList(node:IParserNode, tokens:Vector.<Token>):void
+	protected function buildParamList(node:IParserNode, tokens:Vector.<IToken>):void
 	{
 		addToken(tokens, factory.newLeftParenthesis());
 		var parameterList:IParserNode = ASTUtil.getNode(AS3NodeKind.PARAMETER_LIST, node);
@@ -1045,7 +1045,7 @@ public class BuilderFactory
 		addToken(tokens, factory.newRightParenthesis());
 	}
 	
-	protected function buildContainerAfterStartNewline(node:IParserNode):Token
+	protected function buildContainerAfterStartNewline(node:IParserNode):IToken
 	{
 		switch (node.kind)
 		{
@@ -1060,7 +1060,7 @@ public class BuilderFactory
 		return lastToken;
 	}
 	
-	protected function buildContainerBeforeStartNewline(node:IParserNode):Token
+	protected function buildContainerBeforeStartNewline(node:IParserNode):IToken
 	{
 		switch (node.kind)
 		{
@@ -1101,7 +1101,7 @@ public class BuilderFactory
 		return lastToken;
 	}
 	
-	protected function buildContainerEndNewline(node:IParserNode):Token
+	protected function buildContainerEndNewline(node:IParserNode):IToken
 	{
 		switch (node.kind)
 		{
@@ -1124,7 +1124,7 @@ public class BuilderFactory
 		return lastToken;
 	}
 	
-	protected function buildStartSpace(node:IParserNode):Token
+	protected function buildStartSpace(node:IParserNode):IToken
 	{
 		switch (node.kind)
 		{
@@ -1139,7 +1139,7 @@ public class BuilderFactory
 		return lastToken;
 	}
 	
-	protected function buildEndSpace(node:IParserNode):Token
+	protected function buildEndSpace(node:IParserNode):IToken
 	{
 		switch (node.kind)
 		{
@@ -1154,7 +1154,7 @@ public class BuilderFactory
 		return lastToken;
 	}
 	
-	protected function buildContainerStart(container:IParserNode):Token
+	protected function buildContainerStart(container:IParserNode):IToken
 	{
 		switch (container.kind)
 		{
@@ -1179,7 +1179,7 @@ public class BuilderFactory
 		return lastToken;
 	}
 	
-	protected function buildNode(node:IParserNode):Token
+	protected function buildNode(node:IParserNode):IToken
 	{
 		// TEMP fix for toplevel package being null
 		var text:String = node.stringValue;
@@ -1203,7 +1203,7 @@ public class BuilderFactory
 		return lastToken;
 	}
 	
-	protected function buildContainerEnd(container:IParserNode):Token
+	protected function buildContainerEnd(container:IParserNode):IToken
 	{
 		switch (container.kind)
 		{
@@ -1231,7 +1231,7 @@ public class BuilderFactory
 	}
 	
 	protected function addNewlinesBeforeMembers(ast:IParserNode, 
-												tokens:Vector.<Token>):void
+												tokens:Vector.<IToken>):void
 	{
 		var len:int = newlinesBeforeMembers;
 		for (var i:int = 0; i < len; i++)
@@ -1241,7 +1241,7 @@ public class BuilderFactory
 	}
 	
 	protected function addNewlinesAfterMembers(ast:IParserNode, 
-											   tokens:Vector.<Token>):void
+											   tokens:Vector.<IToken>):void
 	{
 		var len:int = newlinesAfterMembers;
 		for (var i:int = 0; i < len; i++)
@@ -1250,7 +1250,7 @@ public class BuilderFactory
 		}
 	}
 	
-	protected function addToken(tokens:Vector.<Token>, token:Token):void
+	protected function addToken(tokens:Vector.<IToken>, token:IToken):void
 	{
 		if (token)
 		{
@@ -1264,11 +1264,11 @@ public class BuilderFactory
 		}
 	}
 	
-	protected function print(tokens:Vector.<Token>):String
+	protected function print(tokens:Vector.<IToken>):String
 	{
 		var sb:String = "";
 		
-		for each (var element:Token in tokens) 
+		for each (var element:IToken in tokens) 
 		{
 			sb += element.text;
 		}

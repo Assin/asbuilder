@@ -20,6 +20,7 @@
 package org.teotigraphix.as3builder.impl
 {
 
+import org.teotigraphix.as3parser.api.IToken;
 import org.teotigraphix.as3parser.api.KeyWords;
 import org.teotigraphix.as3parser.api.Operators;
 import org.teotigraphix.as3parser.core.Token;
@@ -111,12 +112,12 @@ public class TokenFactory
 	}
 	
 	/**
-	 * Returns a new <code>Token</code>.
+	 * Returns a new <code>IToken</code>.
 	 * 
 	 * @param text The String token text.
-	 * @return A <code>Token</code> with the token text String.
+	 * @return A <code>IToken</code> with the token text String.
 	 */
-	public function newToken(text:String):Token
+	public function newToken(text:String):IToken
 	{
 		return new Token(text, -1, -1);
 	}
@@ -130,7 +131,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.AS</code> token.
 	 */
-	public final function newAs():Token
+	public final function newAs():IToken
 	{
 		return newToken(KeyWords.AS);
 	}
@@ -138,7 +139,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.CASE</code> token.
 	 */
-	public final function newCase():Token
+	public final function newCase():IToken
 	{
 		return newToken(KeyWords.CASE);
 	}
@@ -146,7 +147,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.CATCH</code> token.
 	 */
-	public final function newCatch():Token
+	public final function newCatch():IToken
 	{
 		return newToken(KeyWords.CATCH);
 	}
@@ -154,7 +155,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.CLASS</code> token.
 	 */
-	public final function newClass():Token
+	public final function newClass():IToken
 	{
 		return newToken(KeyWords.CLASS);
 	}
@@ -162,7 +163,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.CONST</code> token.
 	 */
-	public final function newConst():Token
+	public final function newConst():IToken
 	{
 		return newToken(KeyWords.CONST);
 	}
@@ -170,7 +171,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.DEFAULT</code> token.
 	 */
-	public final function newDefault():Token
+	public final function newDefault():IToken
 	{
 		return newToken(KeyWords.DEFAULT);
 	}
@@ -178,7 +179,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.DELETE</code> token.
 	 */
-	public final function newDelete():Token
+	public final function newDelete():IToken
 	{
 		return newToken(KeyWords.DELETE);
 	}
@@ -186,7 +187,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.DO</code> token.
 	 */
-	public final function newDo():Token
+	public final function newDo():IToken
 	{
 		return newToken(KeyWords.DO);
 	}
@@ -194,7 +195,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.DYNAMIC</code> token.
 	 */
-	public final function newDynamic():Token
+	public final function newDynamic():IToken
 	{
 		return newToken(KeyWords.DYNAMIC);
 	}
@@ -202,7 +203,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.EACH</code> token.
 	 */
-	public final function newEach():Token
+	public final function newEach():IToken
 	{
 		return newToken(KeyWords.EACH);
 	}
@@ -210,7 +211,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.ELSE</code> token.
 	 */
-	public final function newElse():Token
+	public final function newElse():IToken
 	{
 		return newToken(KeyWords.ELSE);
 	}
@@ -218,7 +219,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.EOF</code> token.
 	 */
-	public final function newEOF():Token
+	public final function newEOF():IToken
 	{
 		return newToken(KeyWords.EOF);
 	}
@@ -226,7 +227,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.EXTENDS</code> token.
 	 */
-	public final function newExtends():Token
+	public final function newExtends():IToken
 	{
 		return newToken(KeyWords.EXTENDS);
 	}
@@ -234,7 +235,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.FINAL</code> token.
 	 */
-	public final function newFinal():Token
+	public final function newFinal():IToken
 	{
 		return newToken(KeyWords.FINAL);
 	}
@@ -242,7 +243,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.FINALLY</code> token.
 	 */
-	public final function newFinally():Token
+	public final function newFinally():IToken
 	{
 		return newToken(KeyWords.FINALLY);
 	}
@@ -250,7 +251,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.FOR</code> token.
 	 */
-	public final function newFor():Token
+	public final function newFor():IToken
 	{
 		return newToken(KeyWords.FOR);
 	}
@@ -258,7 +259,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.FUNCTION</code> token.
 	 */
-	public final function newFunction():Token
+	public final function newFunction():IToken
 	{
 		return newToken(KeyWords.FUNCTION);
 	}
@@ -266,7 +267,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.GET</code> token.
 	 */
-	public final function newGet():Token
+	public final function newGet():IToken
 	{
 		return newToken(KeyWords.GET);
 	}
@@ -274,7 +275,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.IF</code> token.
 	 */
-	public final function newIf():Token
+	public final function newIf():IToken
 	{
 		return newToken(KeyWords.IF);
 	}
@@ -282,7 +283,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.IMPLEMENTS</code> token.
 	 */
-	public final function newImplements():Token
+	public final function newImplements():IToken
 	{
 		return newToken(KeyWords.IMPLEMENTS);
 	}
@@ -290,7 +291,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.IMPORT</code> token.
 	 */
-	public final function newImport():Token
+	public final function newImport():IToken
 	{
 		return newToken(KeyWords.IMPORT);
 	}
@@ -298,7 +299,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.IN</code> token.
 	 */
-	public final function newIn():Token
+	public final function newIn():IToken
 	{
 		return newToken(KeyWords.IN);
 	}
@@ -306,7 +307,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.INCLUDE</code> token.
 	 */
-	public final function newInclude():Token
+	public final function newInclude():IToken
 	{
 		return newToken(KeyWords.INCLUDE);
 	}
@@ -314,7 +315,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.INSTANCE_OF</code> token.
 	 */
-	public final function newInstanceOf():Token
+	public final function newInstanceOf():IToken
 	{
 		return newToken(KeyWords.INSTANCE_OF);
 	}
@@ -322,7 +323,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.INTERFACE</code> token.
 	 */
-	public final function newInterface():Token
+	public final function newInterface():IToken
 	{
 		return newToken(KeyWords.INTERFACE);
 	}
@@ -330,7 +331,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.INTERNAL</code> token.
 	 */
-	public final function newInternal():Token
+	public final function newInternal():IToken
 	{
 		return newToken(KeyWords.INTERNAL);
 	}
@@ -338,7 +339,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.IS</code> token.
 	 */
-	public final function newIs():Token
+	public final function newIs():IToken
 	{
 		return newToken(KeyWords.IS);
 	}
@@ -346,7 +347,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.NAMESPACE</code> token.
 	 */
-	public final function newNamespace():Token
+	public final function newNamespace():IToken
 	{
 		return newToken(KeyWords.NAMESPACE);
 	}
@@ -354,7 +355,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.NEW</code> token.
 	 */
-	public final function newNew():Token
+	public final function newNew():IToken
 	{
 		return newToken(KeyWords.NEW);
 	}
@@ -362,7 +363,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.OVERRIDE</code> token.
 	 */
-	public final function newOverride():Token
+	public final function newOverride():IToken
 	{
 		return newToken(KeyWords.OVERRIDE);
 	}
@@ -370,7 +371,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.PACKAGE</code> token.
 	 */
-	public final function newPackage():Token
+	public final function newPackage():IToken
 	{
 		return newToken(KeyWords.PACKAGE);
 	}
@@ -378,7 +379,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.PRIVATE</code> token.
 	 */
-	public final function newPrivate():Token
+	public final function newPrivate():IToken
 	{
 		return newToken(KeyWords.PRIVATE);
 	}
@@ -386,7 +387,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.PROTECTED</code> token.
 	 */
-	public final function newProtected():Token
+	public final function newProtected():IToken
 	{
 		return newToken(KeyWords.PROTECTED);
 	}
@@ -394,7 +395,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.public final</code> token.
 	 */
-	public final function newPublic():Token
+	public final function newPublic():IToken
 	{
 		return newToken(KeyWords.PUBLIC);
 	}
@@ -402,7 +403,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.RETURN</code> token.
 	 */
-	public final function newReturn():Token
+	public final function newReturn():IToken
 	{
 		return newToken(KeyWords.RETURN);
 	}
@@ -410,7 +411,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.SET</code> token.
 	 */
-	public final function newSet():Token
+	public final function newSet():IToken
 	{
 		return newToken(KeyWords.SET);
 	}
@@ -418,7 +419,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.STATIC</code> token.
 	 */
-	public final function newStatic():Token
+	public final function newStatic():IToken
 	{
 		return newToken(KeyWords.STATIC);
 	}
@@ -426,7 +427,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.SUPER</code> token.
 	 */
-	public final function newSuper():Token
+	public final function newSuper():IToken
 	{
 		return newToken(KeyWords.SUPER);
 	}
@@ -434,7 +435,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.SWITCH</code> token.
 	 */
-	public final function newSwitch():Token
+	public final function newSwitch():IToken
 	{
 		return newToken(KeyWords.SWITCH);
 	}
@@ -442,7 +443,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.TRY</code> token.
 	 */
-	public final function newTry():Token
+	public final function newTry():IToken
 	{
 		return newToken(KeyWords.TRY);
 	}
@@ -450,7 +451,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.TYPEOF</code> token.
 	 */
-	public final function newTypeof():Token
+	public final function newTypeof():IToken
 	{
 		return newToken(KeyWords.TYPEOF);
 	}
@@ -458,7 +459,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.USE</code> token.
 	 */
-	public final function newUse():Token
+	public final function newUse():IToken
 	{
 		return newToken(KeyWords.USE);
 	}
@@ -466,7 +467,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.VAR</code> token.
 	 */
-	public final function newVar():Token
+	public final function newVar():IToken
 	{
 		return newToken(KeyWords.VAR);
 	}
@@ -474,7 +475,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.VOID</code> token.
 	 */
-	public final function newVoid():Token
+	public final function newVoid():IToken
 	{
 		return newToken(KeyWords.VOID);
 	}
@@ -482,7 +483,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>KeyWords.WHILE</code> token.
 	 */
-	public final function newWhile():Token
+	public final function newWhile():IToken
 	{
 		return newToken(KeyWords.WHILE);
 	}
@@ -496,7 +497,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.AND</code>; <code>&&</code> token.
 	 */
-	public final function newAnd():Token
+	public final function newAnd():IToken
 	{
 		return newToken(Operators.AND);
 	}
@@ -504,7 +505,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.AND_EQUAL</code>; <code>&=</code> token.
 	 */
-	public final function newAndEqual():Token
+	public final function newAndEqual():IToken
 	{
 		return newToken(Operators.AND_EQUAL);
 	}
@@ -512,7 +513,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.AT</code>; <code>@</code> token.
 	 */
-	public final function newAt():Token
+	public final function newAt():IToken
 	{
 		return newToken(Operators.AT);
 	}
@@ -520,7 +521,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.B_AND</code>; <code>&</code> token.
 	 */
-	public final function newBAnd():Token
+	public final function newBAnd():IToken
 	{
 		return newToken(Operators.B_AND);
 	}
@@ -528,7 +529,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.B_OR</code>; <code>|</code> token.
 	 */
-	public final function newBOr():Token
+	public final function newBOr():IToken
 	{
 		return newToken(Operators.B_OR);
 	}
@@ -536,7 +537,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.B_XOR</code>; <code>^</code> token.
 	 */
-	public final function newBXor():Token
+	public final function newBXor():IToken
 	{
 		return newToken(Operators.B_XOR);
 	}
@@ -544,7 +545,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.COLUMN</code>; <code>:</code> token.
 	 */
-	public final function newColumn():Token
+	public final function newColumn():IToken
 	{
 		return newToken(Operators.COLUMN);
 	}
@@ -552,7 +553,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.COMMA</code>; <code>,</code> token.
 	 */
-	public final function newComma():Token
+	public final function newComma():IToken
 	{
 		return newToken(Operators.COMMA);
 	}
@@ -560,7 +561,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.DECREMENT</code>; <code>--</code> token.
 	 */
-	public final function newDecrement():Token
+	public final function newDecrement():IToken
 	{
 		return newToken(Operators.DECREMENT);
 	}
@@ -568,7 +569,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.DIVIDED_EQUAL</code>; <code>/=</code> token.
 	 */
-	public final function newDividedEqual():Token
+	public final function newDividedEqual():IToken
 	{
 		return newToken(Operators.DIVIDED_EQUAL);
 	}
@@ -576,7 +577,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.DOT</code>; <code>.</code> token.
 	 */
-	public final function newDot():Token
+	public final function newDot():IToken
 	{
 		return newToken(Operators.DOT);
 	}
@@ -584,7 +585,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.DOUBLE_COLUMN</code>; <code>::</code> token.
 	 */
-	public final function newDoubleColumn():Token
+	public final function newDoubleColumn():IToken
 	{
 		return newToken(Operators.DOUBLE_COLUMN);
 	}
@@ -592,7 +593,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.DOUBLE_DOT</code>; <code>..</code> token.
 	 */
-	public final function newDoubleDot():Token
+	public final function newDoubleDot():IToken
 	{
 		return newToken(Operators.DOUBLE_DOT);
 	}
@@ -600,7 +601,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.DOUBLE_EQUAL</code>; <code>==</code> token.
 	 */
-	public final function newDoubleEqual():Token
+	public final function newDoubleEqual():IToken
 	{
 		return newToken(Operators.DOUBLE_EQUAL);
 	}
@@ -608,7 +609,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.DOUBLE_QUOTE</code>; <code>"</code> token.
 	 */
-	public final function newDoubleQuote():Token
+	public final function newDoubleQuote():IToken
 	{
 		return newToken(Operators.DOUBLE_QUOTE);
 	}
@@ -616,7 +617,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.DOUBLE_SHIFT_LEFT</code>; <code><<</code> token.
 	 */
-	public final function newDoubleShiftLeft():Token
+	public final function newDoubleShiftLeft():IToken
 	{
 		return newToken(Operators.DOUBLE_SHIFT_LEFT);
 	}
@@ -624,7 +625,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.DOUBLE_SHIFT_RIGHT</code>; <code>>></code> token.
 	 */
-	public final function newDoubleShiftRight():Token
+	public final function newDoubleShiftRight():IToken
 	{
 		return newToken(Operators.DOUBLE_SHIFT_RIGHT);
 	}
@@ -632,7 +633,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.EQUAL</code>; <code>=</code> token.
 	 */
-	public final function newEqual():Token
+	public final function newEqual():IToken
 	{
 		return newToken(Operators.EQUAL);
 	}
@@ -640,7 +641,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.INCREMENT</code>; <code>++</code> token.
 	 */
-	public final function newIncrement():Token
+	public final function newIncrement():IToken
 	{
 		return newToken(Operators.INCREMENT);
 	}
@@ -648,7 +649,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.INFERIOR</code>; <code><</code> token.
 	 */
-	public final function newInferior():Token
+	public final function newInferior():IToken
 	{
 		return newToken(Operators.INFERIOR);
 	}
@@ -656,7 +657,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.INFERIOR_OR_EQUAL</code>; <code><=</code> token.
 	 */
-	public final function newInferiorOrEqual():Token
+	public final function newInferiorOrEqual():IToken
 	{
 		return newToken(Operators.INFERIOR_OR_EQUAL);
 	}
@@ -664,7 +665,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.LEFT_CURLY_BRACKET</code>; <code>{</code> token.
 	 */
-	public final function newLeftCurlyBracket():Token
+	public final function newLeftCurlyBracket():IToken
 	{
 		return newToken(Operators.LEFT_CURLY_BRACKET);
 	}
@@ -672,7 +673,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.LEFT_PARENTHESIS</code>; <code>(</code> token.
 	 */
-	public final function newLeftParenthesis():Token
+	public final function newLeftParenthesis():IToken
 	{
 		return newToken(Operators.LEFT_PARENTHESIS);
 	}
@@ -680,7 +681,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.LEFT_SQUARE_BRACKET</code>; <code>[</code> token.
 	 */
-	public final function newLeftSquareBracket():Token
+	public final function newLeftSquareBracket():IToken
 	{
 		return newToken(Operators.LEFT_SQUARE_BRACKET);
 	}
@@ -688,7 +689,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.LOGICAL_OR</code>; <code>||</code> token.
 	 */
-	public final function newLogicalOr():Token
+	public final function newLogicalOr():IToken
 	{
 		return newToken(Operators.LOGICAL_OR);
 	}
@@ -696,7 +697,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.MINUS</code>; <code>-</code> token.
 	 */
-	public final function newMinus():Token
+	public final function newMinus():IToken
 	{
 		return newToken(Operators.MINUS);
 	}
@@ -704,7 +705,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.MINUS_EQUAL</code>; <code>-=</code> token.
 	 */
-	public final function newMinusEqual():Token
+	public final function newMinusEqual():IToken
 	{
 		return newToken(Operators.MINUS_EQUAL);
 	}
@@ -712,7 +713,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.MODULO</code>; <code>%</code> token.
 	 */
-	public final function newModulo():Token
+	public final function newModulo():IToken
 	{
 		return newToken(Operators.MODULO);
 	}
@@ -720,7 +721,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.MODULO_EQUAL</code>; <code>%=</code> token.
 	 */
-	public final function newModuloEqual():Token
+	public final function newModuloEqual():IToken
 	{
 		return newToken(Operators.MODULO_EQUAL);
 	}
@@ -728,7 +729,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.NON_EQUAL</code>; <code>!=</code> token.
 	 */
-	public final function newNonEqual():Token
+	public final function newNonEqual():IToken
 	{
 		return newToken(Operators.NON_EQUAL);
 	}
@@ -736,7 +737,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.NON_STRICTLY_EQUAL</code>; <code>!==</code> token.
 	 */
-	public final function newNonStrictlyEqual():Token
+	public final function newNonStrictlyEqual():IToken
 	{
 		return newToken(Operators.NON_STRICTLY_EQUAL);
 	}
@@ -744,7 +745,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.OR_EQUAL</code>; <code>|=</code> token.
 	 */
-	public final function newOrEqual():Token
+	public final function newOrEqual():IToken
 	{
 		return newToken(Operators.OR_EQUAL);
 	}
@@ -752,7 +753,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.PLUS</code>; <code>+</code> token.
 	 */
-	public final function newPlus():Token
+	public final function newPlus():IToken
 	{
 		return newToken(Operators.PLUS);
 	}
@@ -760,7 +761,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.PLUS_EQUAL</code>; <code>+=</code> token.
 	 */
-	public final function newPlusEqual():Token
+	public final function newPlusEqual():IToken
 	{
 		return newToken(Operators.PLUS_EQUAL);
 	}
@@ -768,7 +769,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.QUESTION_MARK</code>; <code>?</code> token.
 	 */
-	public final function newQuestionMark():Token
+	public final function newQuestionMark():IToken
 	{
 		return newToken(Operators.QUESTION_MARK);
 	}
@@ -776,7 +777,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.QUOTE</code>; <code>"</code> token.
 	 */
-	public final function newQuote():Token
+	public final function newQuote():IToken
 	{
 		return newToken(Operators.QUOTE);
 	}
@@ -784,7 +785,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.REST_PARAMETERS</code>; <code>...</code> token.
 	 */
-	public final function newRestParameters():Token
+	public final function newRestParameters():IToken
 	{
 		return newToken(Operators.REST_PARAMETERS);
 	}
@@ -792,7 +793,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.RIGHT_CURLY_BRACKET</code>; <code>}</code> token.
 	 */
-	public final function newRightCurlyBracket():Token
+	public final function newRightCurlyBracket():IToken
 	{
 		return newToken(Operators.RIGHT_CURLY_BRACKET);
 	}
@@ -800,7 +801,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.RIGHT_PARENTHESIS</code>; <code>)</code> token.
 	 */
-	public final function newRightParenthesis():Token
+	public final function newRightParenthesis():IToken
 	{
 		return newToken(Operators.RIGHT_PARENTHESIS);
 	}
@@ -808,7 +809,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.RIGHT_SQUARE_BRACKET</code>; <code>]</code> token.
 	 */
-	public final function newRightSquareBracket():Token
+	public final function newRightSquareBracket():IToken
 	{
 		return newToken(Operators.RIGHT_SQUARE_BRACKET);
 	}
@@ -816,7 +817,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.SEMI_COLUMN</code>; <code>;</code> token.
 	 */
-	public final function newSemiColumn():Token
+	public final function newSemiColumn():IToken
 	{
 		return newToken(Operators.SEMI_COLUMN);
 	}
@@ -824,7 +825,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.SIMPLE_QUOTE</code>; <code>'</code> token.
 	 */
-	public final function newSimpleQuote():Token
+	public final function newSimpleQuote():IToken
 	{
 		return newToken(Operators.SIMPLE_QUOTE);
 	}
@@ -832,7 +833,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.SLASH</code>; <code>/</code> token.
 	 */
-	public final function newSlash():Token
+	public final function newSlash():IToken
 	{
 		return newToken(Operators.SLASH);
 	}
@@ -840,7 +841,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.STRICTLY_EQUAL</code>; <code>===</code> token.
 	 */
-	public final function newStrictlyEqual():Token
+	public final function newStrictlyEqual():IToken
 	{
 		return newToken(Operators.STRICTLY_EQUAL);
 	}
@@ -848,7 +849,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.SUPERIOR</code>; <code>></code> token.
 	 */
-	public final function newSuperior():Token
+	public final function newSuperior():IToken
 	{
 		return newToken(Operators.SUPERIOR);
 	}
@@ -856,7 +857,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.SUPERIOR_OR_EQUAL</code>; <code>>=</code> token.
 	 */
-	public final function newSuperiorOrEqual():Token
+	public final function newSuperiorOrEqual():IToken
 	{
 		return newToken(Operators.SUPERIOR_OR_EQUAL);
 	}
@@ -864,7 +865,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.TIMES</code>; <code>*</code> token.
 	 */
-	public final function newTimes():Token
+	public final function newTimes():IToken
 	{
 		return newToken(Operators.TIMES);
 	}
@@ -872,7 +873,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.TIMES</code>; <code>*=</code> token.
 	 */
-	public final function newTimesEqual():Token
+	public final function newTimesEqual():IToken
 	{
 		return newToken(Operators.TIMES_EQUAL);
 	}
@@ -880,7 +881,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.TRIPLE_SHIFT_LEFT</code>; <code><<<</code> token.
 	 */
-	public final function newTripleLeftShift():Token
+	public final function newTripleLeftShift():IToken
 	{
 		return newToken(Operators.TRIPLE_SHIFT_LEFT);
 	}
@@ -888,7 +889,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.TRIPLE_SHIFT_RIGHT</code>; <code>>>></code> token.
 	 */
-	public final function newTripleRightShift():Token
+	public final function newTripleRightShift():IToken
 	{
 		return newToken(Operators.TRIPLE_SHIFT_RIGHT);
 	}
@@ -896,7 +897,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.VECTOR_START</code>; <code>.<</code> token.
 	 */
-	public final function newVectorStart():Token
+	public final function newVectorStart():IToken
 	{
 		return newToken(Operators.VECTOR_START);
 	}
@@ -904,7 +905,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>Operators.XOR_EQUAL</code>; <code>^=</code> token.
 	 */
-	public final function newXOrEqual():Token
+	public final function newXOrEqual():IToken
 	{
 		return newToken(Operators.XOR_EQUAL);
 	}
@@ -918,7 +919,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>" "</code> token.
 	 */
-	public function newSpace():Token
+	public function newSpace():IToken
 	{
 		return newToken(" ");
 	}
@@ -926,7 +927,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>\t or "[i]"</code> token.
 	 */
-	public function newIndent():Token
+	public function newIndent():IToken
 	{
 		return newToken("\t");
 	}
@@ -934,7 +935,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>"newIndent()[i]"</code> token.
 	 */
-	public function newLineIndent():Token
+	public function newLineIndent():IToken
 	{
 		var sb:String = "";
 		var len:int = indent;
@@ -951,7 +952,7 @@ public class TokenFactory
 	/**
 	 * Returns <code>\n</code> token.
 	 */
-	public function newNewLine():Token
+	public function newNewLine():IToken
 	{
 		return newToken("\n");
 	}
