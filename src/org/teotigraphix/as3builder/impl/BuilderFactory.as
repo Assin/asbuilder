@@ -604,7 +604,7 @@ public class BuilderFactory
 		addToken(tokens, factory.newToken(name.stringValue));
 		// type
 		var type:IParserNode = ASTUtil.getNode(AS3NodeKind.TYPE, nit);
-		if (type)
+		if (type && type.stringValue != "")
 		{
 			addToken(tokens, factory.newColumn());
 			addToken(tokens, factory.newToken(type.stringValue));
@@ -641,7 +641,7 @@ public class BuilderFactory
 		addToken(tokens, factory.newToken(name.stringValue));
 		// type
 		var type:IParserNode = ASTUtil.getNode(AS3NodeKind.TYPE, nit);
-		if (type)
+		if (type && type.stringValue != "")
 		{
 			addToken(tokens, factory.newColumn());
 			addToken(tokens, factory.newToken(type.stringValue));
@@ -802,9 +802,20 @@ public class BuilderFactory
 			var child:IParserNode = node.children[i];
 			if (child.isKind(AS3NodeKind.RETURN))
 			{
+				// this is temp unitl I get block elements building
 				addToken(tokens, factory.newReturn());
 				addToken(tokens, factory.newSpace());
-				addToken(tokens, factory.newToken(child.getKind(AS3NodeKind.PRIMARY).stringValue));
+				if (child.hasKind(AS3NodeKind.PRIMARY))
+				{
+					addToken(tokens, factory.newToken(child.getKind(
+						AS3NodeKind.PRIMARY).stringValue));
+				}
+				else if (child.hasKind(AS3NodeKind.MINUS))
+				{
+					addToken(tokens, factory.newToken("-" +
+						child.getKind(AS3NodeKind.MINUS).
+						getKind(AS3NodeKind.PRIMARY).stringValue));
+				}
 				addToken(tokens, factory.newSemiColumn());
 			}
 		}
