@@ -17,48 +17,64 @@
 // mschmalle at teotigraphix dot com
 ////////////////////////////////////////////////////////////////////////////////
 
-package org.teotigraphix.as3book.api
+package org.teotigraphix.asbuilder.impl
 {
 
+import flash.filesystem.File;
+import flash.filesystem.FileMode;
+import flash.filesystem.FileStream;
+
+import org.teotigraphix.as3parser.core.SourceCode;
+import org.teotigraphix.asblocks.ASFactory;
+import org.teotigraphix.asblocks.api.ICompilationUnit;
+import org.teotigraphix.asblocks.impl.ASProject;
+import org.teotigraphix.asblocks.utils.FileUtil;
+
 /**
- * TODO DOCME
+ * An Adobe AIR implementation of the <code>IASProject</code> API.
  * 
  * @author Michael Schmalle
  * @copyright Teoti Graphix, LLC
  * @productversion 1.0
  */
-public interface IAS3BookProcessor
+public class ASBuilderProject extends ASProject
 {
 	//--------------------------------------------------------------------------
 	//
-	//  Properties
+	//  Constructor
 	//
 	//--------------------------------------------------------------------------
 	
-	//----------------------------------
-	//  book
-	//----------------------------------
-	
 	/**
-	 * TODO Docme
+	 * Constructor.
 	 */
-	function get book():IAS3Book;
+	public function ASBuilderProject(factory:ASFactory)
+	{
+		super(factory);
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Overridden Protected :: Methods
+	//
+	//--------------------------------------------------------------------------
 	
 	/**
 	 * @private
 	 */
-	function set book(value:IAS3Book):void;
-	
-	//--------------------------------------------------------------------------
-	//
-	//  Methods
-	//
-	//--------------------------------------------------------------------------
-	
-	/**
-	 * Processes the <code>ICompilationNode</code> instances placed in the
-	 * book.
-	 */
-	function process():void;
+	override protected function write(location:String, unit:ICompilationUnit):void
+	{
+		var fileName:String = FileUtil.fileNameFor(unit);
+		var file:File = new File(location);
+		file = file.resolvePath(fileName);
+		
+		var stream:FileStream = new FileStream();
+		stream.open(file, FileMode.WRITE);
+		
+		var code:SourceCode = new SourceCode(null, file.nativePath);
+		factory.newWriter().write(code, unit);
+		stream.writeUTFBytes(code.code);
+		stream.close();
+	}
 }
 }
