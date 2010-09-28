@@ -24,11 +24,14 @@ import flash.filesystem.File;
 import flash.filesystem.FileMode;
 import flash.filesystem.FileStream;
 
-import org.teotigraphix.as3parser.core.SourceCode;
-import org.teotigraphix.asblocks.ASFactory;
-import org.teotigraphix.asblocks.api.ICompilationUnit;
-import org.teotigraphix.asblocks.impl.ASProject;
-import org.teotigraphix.asblocks.utils.FileUtil;
+import org.as3commons.asblocks.ASFactory;
+import org.as3commons.asblocks.IASParser;
+import org.as3commons.asblocks.api.IClassPathEntry;
+import org.as3commons.asblocks.api.ICompilationUnit;
+import org.as3commons.asblocks.impl.ASProject;
+import org.as3commons.asblocks.parser.core.SourceCode;
+import org.as3commons.asblocks.utils.FileUtil;
+import org.as3commons.mxmlblocks.IMXMLParser;
 
 /**
  * An Adobe AIR implementation of the <code>IASProject</code> API.
@@ -65,6 +68,11 @@ public class ASBuilderProject extends ASProject
 	override protected function write(location:String, unit:ICompilationUnit):void
 	{
 		var fileName:String = FileUtil.fileNameFor(unit);
+		if (location == ".")
+		{
+			location = File.applicationStorageDirectory.nativePath;
+		}
+		
 		var file:File = new File(location);
 		file = file.resolvePath(fileName);
 		
@@ -75,6 +83,68 @@ public class ASBuilderProject extends ASProject
 		factory.newWriter().write(code, unit);
 		stream.writeUTFBytes(code.code);
 		stream.close();
+	}
+	
+	
+	public function readAll():void
+	{
+		var asparser:IASParser = factory.newParser();
+		var mxmlparser:IMXMLParser = factory.newMXMLParser();
+		
+		var files:Array = [];
+		
+		for each (var element:IClassPathEntry in classPathEntries)
+		{
+			readFiles(new File(element.filePath), files);
+			for each (var file:File in files)
+			{
+				var sourceCode:SourceCode = new SourceCode(
+					FileUtil.readFile(file.nativePath), file.nativePath);
+				if (file.extension == "as")
+				{
+					try
+					{
+						addCompilationUnit(asparser.parse(sourceCode));
+					}
+					catch (e:Error)
+					{
+						trace(e.message);
+					}
+				}
+				else if (file.extension == "mxml")
+				{
+					try
+					{
+						addCompilationUnit(mxmlparser.parse(sourceCode, element));
+					}
+					catch (e:Error)
+					{
+						trace(e.message);
+					}
+				}
+			}
+		}
+	}
+	
+	protected function readFiles(directory:File, result:Array = null):Array
+	{
+		if (result == null)
+			result = [];
+		
+		var directories:Array = directory.getDirectoryListing();
+		for each (var file:File in directories)
+		{
+			if (file.isDirectory)
+			{
+				result = readFiles(file, result);
+			}
+			else if (file.extension == "as" || file.extension == "mxml")
+			{
+				result.push(file);
+			}
+		}
+		
+		return result;
 	}
 }
 }
