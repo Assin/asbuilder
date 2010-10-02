@@ -1,6 +1,7 @@
 package org.as3commons.asbook.impl
 {
 
+import flash.events.Event;
 import flash.utils.getTimer;
 
 import org.as3commons.asblocks.IASProject;
@@ -16,13 +17,14 @@ import org.as3commons.asbook.api.ICompilationPackage;
 import org.as3commons.asbook.api.ITypePlaceholder;
 import org.as3commons.asbuilder.impl.ASBuilderFactory;
 import org.flexunit.Assert;
+import org.flexunit.async.Async;
 
 public class TestASBook
 {
-	//private static var TEST_SRC:String = "C:\\dev\\workspace\\opensource\\asbuilder-tests\\src-resource";
+	private static var TEST_SRC:String = "C:\\dev\\workspace\\opensource\\asbuilder-tests\\src-resource";
 	
-	// 13 seconds, 6 seconds no blocks
-	private static var TEST_SRC:String = "C:\\dev\\workspace\\opensource\\asblocks\\src";
+	// 13592 ms, 6 seconds no blocks
+	//private static var TEST_SRC:String = "C:\\dev\\workspace\\opensource\\asblocks\\src";
 	
 	private static var factory:ASBuilderFactory;
 	
@@ -32,21 +34,31 @@ public class TestASBook
 	
 	private static var access:IASBookAccess;
 	
-	[BeforeClass]
-	public static function setUp():void
+	[Before(async)]
+	public function setUp():void
 	{
+		if (factory)
+			return;
+		
 		factory = new ASBuilderFactory();
 		
 		project = factory.newEmptyASProject(".");
 		project.addClassPath(TEST_SRC);
-		var time:int = getTimer();
-		project.readAll();
 		
-		trace(getTimer() - time);
-		
+//		project.readAll();
+		project.readAllAsync();
+
 		book = factory.newASBook(project);
-		book.process();
 		access = book.access;
+		
+		project.addEventListener(Event.COMPLETE, complete);
+		Async.proceedOnEvent(this, project, "complete", 50000);
+	}
+	
+	private static function complete(event:Event):void
+	{
+		trace("complete");
+		book.process();
 	}
 	
 	[Test]

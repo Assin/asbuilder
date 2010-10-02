@@ -20,15 +20,20 @@
 package org.as3commons.asbuilder.impl
 {
 
+import flash.events.Event;
+import flash.events.ProgressEvent;
+import flash.events.TimerEvent;
 import flash.filesystem.File;
 import flash.filesystem.FileMode;
 import flash.filesystem.FileStream;
+import flash.utils.Timer;
 
 import org.as3commons.asblocks.ASFactory;
 import org.as3commons.asblocks.IASParser;
 import org.as3commons.asblocks.api.IClassPathEntry;
 import org.as3commons.asblocks.api.ICompilationUnit;
 import org.as3commons.asblocks.impl.ASProject;
+import org.as3commons.asblocks.impl.IParserInfo;
 import org.as3commons.asblocks.parser.core.SourceCode;
 import org.as3commons.asblocks.utils.FileUtil;
 import org.as3commons.mxmlblocks.IMXMLParser;
@@ -42,6 +47,24 @@ import org.as3commons.mxmlblocks.IMXMLParser;
  */
 public class ASBuilderProject extends ASProject
 {
+	//--------------------------------------------------------------------------
+	//
+	//  Private :: Variables
+	//
+	//--------------------------------------------------------------------------
+	
+	private var infos:Vector.<IParserInfo>;
+	
+	private var asyncTimer:Timer;
+	
+	private var parseTimer:Timer;
+	
+	private var count:int;
+	
+	private var total:int;
+	
+	private var parseDelay:int = 50;
+	
 	//--------------------------------------------------------------------------
 	//
 	//  Constructor
@@ -85,7 +108,12 @@ public class ASBuilderProject extends ASProject
 		stream.close();
 	}
 	
-	
+	/**
+	 * 1. loops through all classPathEntries
+	 * 2. loops through all .as, .mxml files in classPath
+	 *   2a. parses the source code
+	 *   2b. adds the compilation unit
+	 */
 	override public function readAll():void
 	{
 		var asparser:IASParser = factory.newParser();
@@ -104,7 +132,7 @@ public class ASBuilderProject extends ASProject
 				{
 					try
 					{
-						addCompilationUnit(asparser.parse(sourceCode, false));
+						addCompilationUnit(asparser.parse(sourceCode));
 					}
 					catch (e:Error)
 					{
@@ -126,6 +154,47 @@ public class ASBuilderProject extends ASProject
 		}
 	}
 	
+	/**
+	 * @private
+	 */
+	override public function readAllAsync():void
+	{
+		asyncTimer = new Timer(10, 1);
+		asyncTimer.addEventListener(TimerEvent.TIMER_COMPLETE, asyncTimer_timerCompleteHandler);
+		
+		var asparser:IASParser = factory.newParser();
+		var mxmlparser:IMXMLParser = factory.newMXMLParser();
+		
+		var files:Array = [];
+		infos = new Vector.<IParserInfo>();
+		
+		for each (var entry:IClassPathEntry in classPathEntries)
+		{
+			readFiles(new File(entry.filePath), files);
+			
+			for each (var file:File in files)
+			{
+				var sourceCode:SourceCode = new SourceCode(
+					FileUtil.readFile(file.nativePath), file.nativePath);
+				if (file.extension == "as")
+				{
+					infos.push(asparser.parseAsync(sourceCode, entry, true));
+				}
+				else if (file.extension == "mxml")
+				{
+					infos.push(mxmlparser.parseAsync(sourceCode, entry));
+				}
+			}
+		}
+		
+		count = total = infos.length;
+		
+		asyncTimer.start();
+	}
+	
+	/**
+	 * @private
+	 */
 	protected function readFiles(directory:File, result:Array = null):Array
 	{
 		if (result == null)
@@ -145,6 +214,48 @@ public class ASBuilderProject extends ASProject
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * @private
+	 */
+	private function readNextAsync(event:Event = null):void
+	{
+		// FIXME Need ASBuilderProjectEvent
+		if (parseTimer)
+		{
+			parseTimer.removeEventListener(TimerEvent.TIMER_COMPLETE, readNextAsync);
+		}
+		
+		//trace("Files to parse [" + infos.length + "]");
+		
+		var info:IParserInfo = infos.shift();
+		if (!info)
+		{
+			dispatchEvent(new Event(Event.COMPLETE));
+			return;
+		}
+		
+		dispatchEvent(new ProgressEvent(ProgressEvent.PROGRESS, false, false, count, total));
+		
+		//trace("Parsing [" + info.sourceCode.filePath + "]");
+		addCompilationUnit(Object(info).parse());
+		
+		count--;
+		
+		parseTimer = new Timer(parseDelay, 1);
+		parseTimer.addEventListener(TimerEvent.TIMER_COMPLETE, readNextAsync);
+		parseTimer.start();
+	}
+	
+	/**
+	 * @private
+	 */
+	private function asyncTimer_timerCompleteHandler(event:TimerEvent):void
+	{
+		asyncTimer.removeEventListener(
+			TimerEvent.TIMER_COMPLETE, asyncTimer_timerCompleteHandler);
+		readNextAsync();
 	}
 }
 }
