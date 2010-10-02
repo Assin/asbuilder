@@ -1,4 +1,4 @@
-package org.teotigraphix.asbuilder.impl
+package org.as3commons.asbuilder.impl
 {
 import org.as3commons.asblocks.CodeMirror;
 import org.as3commons.asblocks.api.IClassType;

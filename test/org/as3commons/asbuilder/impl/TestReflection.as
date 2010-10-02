@@ -1,4 +1,4 @@
-package org.teotigraphix.asbuilder.impl
+package org.as3commons.asbuilder.impl
 {
 public class TestReflection
 {

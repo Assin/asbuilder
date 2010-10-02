@@ -1,9 +1,6 @@
-package org.teotigraphix.asblocks
+package org.as3commons.asblocks
 {
 
-import org.as3commons.asblocks.ASBlocksSyntaxError;
-import org.as3commons.asblocks.ASFactory;
-import org.as3commons.asblocks.IASWriter;
 import org.as3commons.asblocks.api.ICompilationUnit;
 import org.as3commons.asblocks.parser.api.AS3NodeKind;
 import org.as3commons.asblocks.parser.api.IParserNode;

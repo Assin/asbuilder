@@ -17,7 +17,7 @@
 // mschmalle at teotigraphix dot com
 ////////////////////////////////////////////////////////////////////////////////
 
-package org.teotigraphix.asbuilder.impl
+package org.as3commons.asbuilder.impl
 {
 
 import flash.filesystem.File;
@@ -86,7 +86,7 @@ public class ASBuilderProject extends ASProject
 	}
 	
 	
-	public function readAll():void
+	override public function readAll():void
 	{
 		var asparser:IASParser = factory.newParser();
 		var mxmlparser:IMXMLParser = factory.newMXMLParser();

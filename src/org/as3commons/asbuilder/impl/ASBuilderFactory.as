@@ -17,11 +17,21 @@
 // mschmalle at teotigraphix dot com
 ////////////////////////////////////////////////////////////////////////////////
 
-package org.teotigraphix.asbuilder.impl
+package org.as3commons.asbuilder.impl
 {
 
 import org.as3commons.asblocks.ASFactory;
 import org.as3commons.asblocks.IASProject;
+import org.as3commons.asblocks.IASVisitor;
+import org.as3commons.asblocks.IASWalker;
+import org.as3commons.asblocks.impl.ASWalker;
+import org.as3commons.asbook.api.IASBook;
+import org.as3commons.asbook.api.IASBookAccess;
+import org.as3commons.asbook.api.IASBookProcessor;
+import org.as3commons.asbook.impl.ASBook;
+import org.as3commons.asbook.impl.ASBookAccess;
+import org.as3commons.asbook.impl.ASBookProcessor;
+import org.as3commons.asbook.impl.ASBookVisitor;
 
 /**
  * An Adobe AIR implementation of the <code>ASFactory</code> API.
@@ -53,13 +63,59 @@ public class ASBuilderFactory extends ASFactory
 	//--------------------------------------------------------------------------
 	
 	/**
-	 * @Private
+	 * @private
 	 */
 	override public function newEmptyASProject(outputLocation:String):IASProject
 	{
 		var result:IASProject = new ASBuilderProject(this);
 		result.outputLocation = outputLocation;
 		return result;
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Public :: Methods
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 * @private
+	 */
+	public function newASBook(project:IASProject):IASBook
+	{
+		return new ASBook(project);
+	}
+	
+	/**
+	 * @private
+	 */
+	public function newASBookProccessor(book:IASBook):IASBookProcessor
+	{
+		return new ASBookProcessor(book);
+	}
+	
+	/**
+	 * @private
+	 */
+	public function newASBookAccess(book:IASBook):IASBookAccess
+	{
+		return new ASBookAccess(book);
+	}
+	
+	/**
+	 * @private
+	 */
+	public function newASBookVisitor(book:IASBook):IASVisitor
+	{
+		return new ASBookVisitor(book);
+	}
+	
+	/**
+	 * @private
+	 */
+	public function newASBookWalker(book:IASBook):IASWalker
+	{
+		return new ASWalker(newASBookVisitor(book));
 	}
 }
 }
