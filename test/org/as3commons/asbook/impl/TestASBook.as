@@ -1,22 +1,28 @@
 package org.as3commons.asbook.impl
 {
 
+import flash.utils.getTimer;
+
 import org.as3commons.asblocks.IASProject;
 import org.as3commons.asblocks.api.IClassType;
 import org.as3commons.asblocks.api.ICompilationUnit;
+import org.as3commons.asblocks.api.IField;
 import org.as3commons.asblocks.api.IFunctionType;
 import org.as3commons.asblocks.api.IInterfaceType;
 import org.as3commons.asblocks.api.IType;
 import org.as3commons.asbook.api.IASBook;
 import org.as3commons.asbook.api.IASBookAccess;
 import org.as3commons.asbook.api.ICompilationPackage;
-import org.as3commons.asbook.api.ITypeNodePlaceholder;
+import org.as3commons.asbook.api.ITypePlaceholder;
 import org.as3commons.asbuilder.impl.ASBuilderFactory;
 import org.flexunit.Assert;
 
 public class TestASBook
 {
-	private static var TEST_SRC:String = "C:\\dev\\workspace\\opensource\\asbuilder-tests\\src-resource";
+	//private static var TEST_SRC:String = "C:\\dev\\workspace\\opensource\\asbuilder-tests\\src-resource";
+	
+	// 13 seconds, 6 seconds no blocks
+	private static var TEST_SRC:String = "C:\\dev\\workspace\\opensource\\asblocks\\src";
 	
 	private static var factory:ASBuilderFactory;
 	
@@ -33,8 +39,10 @@ public class TestASBook
 		
 		project = factory.newEmptyASProject(".");
 		project.addClassPath(TEST_SRC);
-		
+		var time:int = getTimer();
 		project.readAll();
+		
+		trace(getTimer() - time);
 		
 		book = factory.newASBook(project);
 		book.process();
@@ -221,7 +229,7 @@ public class TestASBook
 		
 		type = access.getType("org.example.Fake");
 		Assert.assertNotNull(type);
-		Assert.assertTrue((type is ITypeNodePlaceholder));
+		Assert.assertTrue((type is ITypePlaceholder));
 		Assert.assertEquals("Fake", type.name);
 		Assert.assertEquals("org.example", type.packageName);
 		Assert.assertEquals("org.example.Fake", type.qualifiedName);
@@ -377,6 +385,32 @@ public class TestASBook
 		Assert.assertNull(subs3);
 	}
 	
+	[Test]
+	public function test_getFields():void
+	{
+		var element1:IClassType = access.findClassType("org.example.core.ClassA");
+		var element2:IClassType = access.findClassType("org.example.core.ClassB");
+		var element3:IClassType = access.findClassType("org.example.core.ClassC");
+		
+		var members1:Vector.<IField> = access.getFields(element1, null, false);
+		Assert.assertNotNull(members1);
+		Assert.assertEquals(9, members1.length);
+		
+		/*
+		Assert.assertEquals("aProtectedVar", members1[0].name);
+		Assert.assertEquals("org.example.core.ClassA#attribute:aProtectedVar", members1[0].qualifiedName);
+		Assert.assertEquals("aPublicVar", members1[1].name);
+		Assert.assertEquals("org.example.core.ClassA#attribute:aPublicVar", members1[1].qualifiedName);
+		Assert.assertEquals("aPublicStaticVar", members1[2].name);
+		Assert.assertEquals("org.example.core.ClassA#attribute:aPublicStaticVar", members1[2].qualifiedName);
+		Assert.assertEquals("aMxInternalVar", members1[3].name);
+		Assert.assertEquals("org.example.core.ClassA#attribute:aMxInternalVar", members1[3].qualifiedName);
+		Assert.assertEquals("aVectorVar", members1[4].name);
+		Assert.assertEquals("org.example.core.ClassA#attribute:aVectorVar", members1[4].qualifiedName);
+		*/
+		
+		
+	}
 	
 	
 	

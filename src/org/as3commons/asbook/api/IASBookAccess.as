@@ -22,9 +22,11 @@ package org.as3commons.asbook.api
 
 import org.as3commons.asblocks.api.IClassType;
 import org.as3commons.asblocks.api.ICompilationUnit;
+import org.as3commons.asblocks.api.IField;
 import org.as3commons.asblocks.api.IFunctionType;
 import org.as3commons.asblocks.api.IInterfaceType;
 import org.as3commons.asblocks.api.IType;
+import org.as3commons.asblocks.api.Visibility;
 
 /**
  * The <strong>IASBookAccessor</strong> interface is used to access the
@@ -261,6 +263,29 @@ public interface IASBookAccess
 	 * @return Vector of <code>IType</code> subinterfaces.
 	 */
 	function getSubInterfaces(node:IType):Vector.<IType>;
+	
+	//----------------------------------
+	//  Class members
+	//----------------------------------
+	
+	/**
+	 * Returns all <code>IField</code> for the given <code>IClassType</code>.
+	 * 
+	 * @param node The <code>IClassType</code> parent.
+	 * @param visibility The visibility of the member; <code>public</code>,
+	 * <code>protected</code>, <code>private</code>, <code>internal</code>, 
+	 * or a custom name space.
+	 * @param inherit A <code>Boolean</code> indicating whether to return the 
+	 * full super list of members with no duplication.
+	 * @return A <code>Vector</code> of <code>IField</code> elements or
+	 * an empty <code>Vector</code>.
+	 */
+	function getFields(node:IClassType, 
+					   visibility:Visibility, 
+					   inherit:Boolean):Vector.<IField>;
+	
+	
+	
 	
 }
 }

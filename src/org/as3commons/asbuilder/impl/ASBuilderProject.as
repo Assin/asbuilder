@@ -104,7 +104,7 @@ public class ASBuilderProject extends ASProject
 				{
 					try
 					{
-						addCompilationUnit(asparser.parse(sourceCode));
+						addCompilationUnit(asparser.parse(sourceCode, false));
 					}
 					catch (e:Error)
 					{

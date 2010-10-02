@@ -9,7 +9,7 @@ import org.as3commons.asblocks.impl.ASQName;
 import org.as3commons.asblocks.parser.api.AS3NodeKind;
 import org.as3commons.asbook.api.IASBook;
 import org.as3commons.asbook.api.IASBookProcessor;
-import org.as3commons.asbook.api.ITypeNodePlaceholder;
+import org.as3commons.asbook.api.ITypePlaceholder;
 
 /**
  * Processes nodes in the book.
@@ -173,7 +173,7 @@ public class ASBookProcessor implements IASBookProcessor
 	private function _cacheSuperClasses(element:IType, 
 										result:Vector.<IType>):void
 	{
-		if (element is ITypeNodePlaceholder)
+		if (element is ITypePlaceholder)
 			return;
 		
 		var ctype:IClassType = IClassType(element);
