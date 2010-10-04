@@ -10,7 +10,11 @@ import org.as3commons.asblocks.api.ICompilationUnit;
 import org.as3commons.asblocks.api.IField;
 import org.as3commons.asblocks.api.IFunctionType;
 import org.as3commons.asblocks.api.IInterfaceType;
+import org.as3commons.asblocks.api.IMethod;
 import org.as3commons.asblocks.api.IType;
+import org.as3commons.asblocks.impl.ASTPrinter;
+import org.as3commons.asblocks.impl.ASWriter;
+import org.as3commons.asblocks.parser.core.SourceCode;
 import org.as3commons.asbook.api.IASBook;
 import org.as3commons.asbook.api.IASBookAccess;
 import org.as3commons.asbook.api.ICompilationPackage;
@@ -65,7 +69,11 @@ public class TestASBook
 	public function testBasicStart():void
 	{
 		Assert.assertEquals(1, project.classPathEntries.length);
-		Assert.assertEquals(15, project.compilationUnits.length); 
+		Assert.assertEquals(15, project.compilationUnits.length);
+		
+		var c:SourceCode = new SourceCode();
+		//new ASWriter().write(c, project.compilationUnits[1]);
+		//new ASTPrinter(c).print(Object(project.compilationUnits[9]).mxml);
 	}
 	
 	[Test]
@@ -342,10 +350,11 @@ public class TestASBook
 		Assert.assertEquals("org.example.core.ICoreInterface", element2.qualifiedName);
 		
 		var imps1:Vector.<IType> = access.getInterfaceImplementors(element1);
+		var result:Array = sortOn(imps1, "qualifiedName");
 		Assert.assertNotNull(imps1);
 		Assert.assertEquals(2, imps1.length);
-		Assert.assertEquals("org.example.util.ClassD", imps1[0].qualifiedName);
-		Assert.assertEquals("org.example.core.ClassA", imps1[1].qualifiedName);
+		Assert.assertEquals("org.example.core.ClassA", result[0].qualifiedName);
+		Assert.assertEquals("org.example.util.ClassD", result[1].qualifiedName);
 		
 		var imps2:Vector.<IType> = access.getInterfaceImplementors(element2);
 		Assert.assertNotNull(imps2);
@@ -407,24 +416,50 @@ public class TestASBook
 		var members1:Vector.<IField> = access.getFields(element1, null, false);
 		Assert.assertNotNull(members1);
 		Assert.assertEquals(9, members1.length);
+		var result:Array = sortOn(members1, "qualifiedName");
 		
-		/*
-		Assert.assertEquals("aProtectedVar", members1[0].name);
-		Assert.assertEquals("org.example.core.ClassA#attribute:aProtectedVar", members1[0].qualifiedName);
-		Assert.assertEquals("aPublicVar", members1[1].name);
-		Assert.assertEquals("org.example.core.ClassA#attribute:aPublicVar", members1[1].qualifiedName);
-		Assert.assertEquals("aPublicStaticVar", members1[2].name);
-		Assert.assertEquals("org.example.core.ClassA#attribute:aPublicStaticVar", members1[2].qualifiedName);
-		Assert.assertEquals("aMxInternalVar", members1[3].name);
-		Assert.assertEquals("org.example.core.ClassA#attribute:aMxInternalVar", members1[3].qualifiedName);
-		Assert.assertEquals("aVectorVar", members1[4].name);
-		Assert.assertEquals("org.example.core.ClassA#attribute:aVectorVar", members1[4].qualifiedName);
-		*/
-		
-		
+		Assert.assertEquals("aPrivateStaticConst", result[0].name);
+		Assert.assertEquals("org.example.core.ClassA#constant:aPrivateStaticConst", result[0].qualifiedName);
+		Assert.assertEquals("aProtectedStaticConst", result[1].name);
+		Assert.assertEquals("org.example.core.ClassA#constant:aProtectedStaticConst", result[1].qualifiedName);
+		Assert.assertEquals("aPublicStaticConst", result[2].name);
+		Assert.assertEquals("org.example.core.ClassA#constant:aPublicStaticConst", result[2].qualifiedName);
+		Assert.assertEquals("aMxInternalVar", result[3].name);
+		Assert.assertEquals("org.example.core.ClassA#field:aMxInternalVar", result[3].qualifiedName);
+		Assert.assertEquals("aPrivateVar", result[4].name);
+		Assert.assertEquals("org.example.core.ClassA#field:aPrivateVar", result[4].qualifiedName);
+		Assert.assertEquals("aProtectedVar", result[5].name);
+		Assert.assertEquals("org.example.core.ClassA#field:aProtectedVar", result[5].qualifiedName);
+		Assert.assertEquals("aPublicStaticVar", result[6].name);
+		Assert.assertEquals("org.example.core.ClassA#field:aPublicStaticVar", result[6].qualifiedName);
+		Assert.assertEquals("aPublicVar", result[7].name);
+		Assert.assertEquals("org.example.core.ClassA#field:aPublicVar", result[7].qualifiedName);
+		Assert.assertEquals("aVectorVar", result[8].name);
+		Assert.assertEquals("org.example.core.ClassA#field:aVectorVar", result[8].qualifiedName);
 	}
 	
+	[Test]
+	public function test_getMethods():void
+	{
+		var element1:IClassType = access.findClassType("org.example.core.ClassA");
+		
+		var members1:Vector.<IMethod> = access.getMethods(element1, null, false);
+		var result:Array = sortOn(members1, "name");
+		
+		Assert.assertNotNull(members1);
+		Assert.assertEquals(5, members1.length);
+		Assert.assertEquals("ClassA", result[0].name);
+		Assert.assertEquals("aPrivateMethod", result[1].name);
+		Assert.assertEquals("aProtectedMethod", result[2].name);
+		Assert.assertEquals("aPublicMethod", result[3].name);
+		Assert.assertEquals("aPublicStaticMethod", result[4].name);
+	}
 	
+	[Test]
+	public function test_getAccessors():void
+	{
+		
+	}
 	
 	
 	

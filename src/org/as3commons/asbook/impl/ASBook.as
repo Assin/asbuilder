@@ -14,8 +14,6 @@ import org.as3commons.asblocks.api.IInterfaceType;
 import org.as3commons.asblocks.api.IMethod;
 import org.as3commons.asblocks.api.IPackage;
 import org.as3commons.asblocks.api.IScriptNode;
-import org.as3commons.asblocks.api.IType;
-import org.as3commons.asblocks.impl.ASWalker;
 import org.as3commons.asblocks.parser.api.AS3NodeKind;
 import org.as3commons.asblocks.parser.api.IParserNode;
 import org.as3commons.asbook.api.IASBook;

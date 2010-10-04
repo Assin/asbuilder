@@ -25,6 +25,7 @@ import org.as3commons.asblocks.api.ICompilationUnit;
 import org.as3commons.asblocks.api.IField;
 import org.as3commons.asblocks.api.IFunctionType;
 import org.as3commons.asblocks.api.IInterfaceType;
+import org.as3commons.asblocks.api.IMethod;
 import org.as3commons.asblocks.api.IType;
 import org.as3commons.asblocks.api.Visibility;
 
@@ -284,6 +285,21 @@ public interface IASBookAccess
 					   visibility:Visibility, 
 					   inherit:Boolean):Vector.<IField>;
 	
+	/**
+	 * Returns all <code>IMethod</code> for the given <code>IType</code>.
+	 * 
+	 * @param node The <code>IType</code> parent.
+	 * @param visibility The visibility of the member; <code>public</code>,
+	 * <code>protected</code>, <code>private</code>, <code>internal</code>
+	 * , or a custom name space.
+	 * @param inherit A <code>Boolean</code> indicating whether to return the 
+	 * full super list of members with no duplication.
+	 * @return A <code>Vector</code> of <code>IMethod</code> elements or
+	 * an empty <code>Vector</code>.
+	 */
+	function getMethods(node:IType, 
+						visibility:Visibility,
+						inherit:Boolean):Vector.<IMethod>;
 	
 	
 	

@@ -1,11 +1,13 @@
 package org.as3commons.asbook.impl
 {
 
+import org.as3commons.asblocks.api.AccessorRole;
 import org.as3commons.asblocks.api.IClassType;
 import org.as3commons.asblocks.api.ICompilationUnit;
 import org.as3commons.asblocks.api.IField;
 import org.as3commons.asblocks.api.IFunctionType;
 import org.as3commons.asblocks.api.IInterfaceType;
+import org.as3commons.asblocks.api.IMember;
 import org.as3commons.asblocks.api.IMethod;
 import org.as3commons.asblocks.api.IScriptNode;
 import org.as3commons.asblocks.api.IType;
@@ -22,7 +24,7 @@ import org.as3commons.asbook.api.ITypePlaceholder;
  * @copyright Teoti Graphix, LLC
  * @productversion 1.0
  */
-public class ASBookAccess implements IASBookAccess
+public class ASBookAccess implements IASBookAccess 
 {
 	//--------------------------------------------------------------------------
 	//
@@ -341,7 +343,7 @@ public class ASBookAccess implements IASBookAccess
 							  inherit:Boolean):Vector.<IField>
 	{
 		var members:Vector.<IField> = 
-			findFields(element, visibility, false);
+			Vector.<IField>(findMembers(element, "fields", visibility, false));
 		
 		if (!inherit)
 		{
@@ -359,33 +361,77 @@ public class ASBookAccess implements IASBookAccess
 		
 		for each (var type:IType in supers)
 		{
-			result = result.concat(findFields(type, visibility, true));
+			result = result.concat(Vector.<IField>(
+				findMembers(type, "fields", visibility, true)));
 		}
 		
 		return result;
 	}
 	
-	
-	
-	
-	
-	
-	
-	protected function findFields(element:IType,
-								  visibility:Visibility, 
-								  inherited:Boolean):Vector.<IField>
+	/**
+	 * @copy org.as3commons.asbook.api.IASBookAccess#getMethods()
+	 */
+	public function getMethods(element:IType,
+							   visibility:Visibility, 
+							   inherit:Boolean):Vector.<IMethod>
 	{
-		var result:Vector.<IField> = new Vector.<IField>();
+		var members:Vector.<IMethod> = 
+			Vector.<IMethod>(findMembers(element, "methods", visibility, false));
+		
+		if (!inherit)
+		{
+			return members;
+		}
+		
+		//------------------------------
+		var result:Vector.<IMethod> = new Vector.<IMethod>();
+		
+		result = result.concat(members);
+		
+		var supers:Vector.<IType> = findSuperClasses(element);
+		if (supers == null) // FIXME HACK
+			return result;
+		
+		for each (var type:IType in supers)
+		{
+			result = result.concat(Vector.<IMethod>(
+				findMembers(type, "methods", visibility, true)));
+		}
+		
+		return result;
+	}
+
+	
+
+	
+	
+	
+	protected function findMembers(element:IType,
+								   type:String,
+								   visibility:Visibility, 
+								   inherited:Boolean):Vector.<IMember>
+	{
+		var result:Vector.<IMember> = new Vector.<IMember>();
 		
 		if (element is ITypePlaceholder)
 			return result;
 		
-		if (!_book.fields.containsKey(element.qualifiedName))
+		if (!_book[type].containsKey(element.qualifiedName))
 			return result;
 		
-		var members:Vector.<IField> = _book.fields.getValue(element.qualifiedName);
-		for each (var member:IField in members)
+		var members:Vector.<IMember> = Vector.<IMember>(
+			_book[type].getValue(element.qualifiedName));
+		
+		for each (var member:IMember in members)
 		{
+			if (type == "methods")
+			{
+				if (!IMethod(member).accessorRole.equals(AccessorRole.NORMAL))
+				{
+					continue;
+				}
+			}
+			
 			if (isIncluded(member, inherited))
 			{
 				if (visibility == null || member.visibility.equals(visibility))
@@ -397,6 +443,8 @@ public class ASBookAccess implements IASBookAccess
 		
 		return result;
 	}
+	
+	
 	
 	protected function findSuperClasses(element:IType):Vector.<IType>
 	{
