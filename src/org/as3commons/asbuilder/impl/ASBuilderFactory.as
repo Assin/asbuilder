@@ -63,7 +63,9 @@ public class ASBuilderFactory extends ASFactory
 	//--------------------------------------------------------------------------
 	
 	/**
-	 * @private
+	 * Returns a new <code>ASBuilderProject</code>.
+	 * 
+	 * @inheritDoc
 	 */
 	override public function newEmptyASProject(outputLocation:String):IASProject
 	{

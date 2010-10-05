@@ -21,13 +21,13 @@ package org.as3commons.asbuilder.impl
 {
 
 import flash.events.Event;
-import flash.events.ProgressEvent;
 import flash.events.TimerEvent;
 import flash.filesystem.File;
 import flash.filesystem.FileMode;
 import flash.filesystem.FileStream;
 import flash.utils.Timer;
 
+import org.as3commons.asblocks.ASBlocksSyntaxError;
 import org.as3commons.asblocks.ASFactory;
 import org.as3commons.asblocks.IASParser;
 import org.as3commons.asblocks.api.IClassPathEntry;
@@ -53,7 +53,13 @@ public class ASBuilderProject extends ASProject
 	//
 	//--------------------------------------------------------------------------
 	
+	private static const AS_EXT:String = "as";
+	
+	private static const MXML_EXT:String = "mxml";
+	
 	private var infos:Vector.<IParserInfo>;
+	
+	private var failedInfos:Vector.<IParserInfo>;
 	
 	private var asyncTimer:Timer;
 	
@@ -109,10 +115,7 @@ public class ASBuilderProject extends ASProject
 	}
 	
 	/**
-	 * 1. loops through all classPathEntries
-	 * 2. loops through all .as, .mxml files in classPath
-	 *   2a. parses the source code
-	 *   2b. adds the compilation unit
+	 * @private
 	 */
 	override public function readAll():void
 	{
@@ -121,34 +124,39 @@ public class ASBuilderProject extends ASProject
 		
 		var files:Array = [];
 		
-		for each (var element:IClassPathEntry in classPathEntries)
+		infos = new Vector.<IParserInfo>();
+		failedInfos = new Vector.<IParserInfo>();
+		
+		for each (var entry:IClassPathEntry in classPathEntries)
 		{
-			readFiles(new File(element.filePath), files);
+			readFiles(new File(entry.filePath), files);
+			
 			for each (var file:File in files)
 			{
+				var info:IParserInfo;
+				var unit:ICompilationUnit;
+				
 				var sourceCode:SourceCode = new SourceCode(
 					FileUtil.readFile(file.nativePath), file.nativePath);
+				
 				if (file.extension == "as")
 				{
-					try
-					{
-						addCompilationUnit(asparser.parse(sourceCode));
-					}
-					catch (e:Error)
-					{
-						trace(e.message);
-					}
+					info = asparser.parseAsync(sourceCode, entry, true);
 				}
 				else if (file.extension == "mxml")
 				{
-					try
-					{
-						addCompilationUnit(mxmlparser.parse(sourceCode, element));
-					}
-					catch (e:Error)
-					{
-						trace(e.message);
-					}
+					info = mxmlparser.parseAsync(sourceCode, entry);
+				}
+				
+				try
+				{
+					unit = info.parse();
+					addCompilationUnit(unit);
+				}
+				catch (e:ASBlocksSyntaxError)
+				{
+					info.error = e;
+					failedInfos.push(info);
 				}
 			}
 		}
@@ -160,13 +168,16 @@ public class ASBuilderProject extends ASProject
 	override public function readAllAsync():void
 	{
 		asyncTimer = new Timer(10, 1);
-		asyncTimer.addEventListener(TimerEvent.TIMER_COMPLETE, asyncTimer_timerCompleteHandler);
+		asyncTimer.addEventListener(
+			TimerEvent.TIMER_COMPLETE, 
+			asyncTimer_timerCompleteHandler);
 		
 		var asparser:IASParser = factory.newParser();
 		var mxmlparser:IMXMLParser = factory.newMXMLParser();
 		
 		var files:Array = [];
 		infos = new Vector.<IParserInfo>();
+		failedInfos = new Vector.<IParserInfo>();
 		
 		for each (var entry:IClassPathEntry in classPathEntries)
 		{
@@ -176,11 +187,11 @@ public class ASBuilderProject extends ASProject
 			{
 				var sourceCode:SourceCode = new SourceCode(
 					FileUtil.readFile(file.nativePath), file.nativePath);
-				if (file.extension == "as")
+				if (file.extension == AS_EXT)
 				{
 					infos.push(asparser.parseAsync(sourceCode, entry, true));
 				}
-				else if (file.extension == "mxml")
+				else if (file.extension == MXML_EXT)
 				{
 					infos.push(mxmlparser.parseAsync(sourceCode, entry));
 				}
@@ -207,7 +218,7 @@ public class ASBuilderProject extends ASProject
 			{
 				result = readFiles(file, result);
 			}
-			else if (file.extension == "as" || file.extension == "mxml")
+			else if (file.extension == AS_EXT || file.extension == MXML_EXT)
 			{
 				result.push(file);
 			}
@@ -221,10 +232,11 @@ public class ASBuilderProject extends ASProject
 	 */
 	private function readNextAsync(event:Event = null):void
 	{
-		// FIXME Need ASBuilderProjectEvent
 		if (parseTimer)
 		{
-			parseTimer.removeEventListener(TimerEvent.TIMER_COMPLETE, readNextAsync);
+			parseTimer.removeEventListener(
+				TimerEvent.TIMER_COMPLETE, 
+				readNextAsync);
 		}
 		
 		//trace("Files to parse [" + infos.length + "]");
@@ -232,19 +244,37 @@ public class ASBuilderProject extends ASProject
 		var info:IParserInfo = infos.shift();
 		if (!info)
 		{
-			dispatchEvent(new Event(Event.COMPLETE));
+			dispatchEvent(new ASBuilderProjectEvent(
+				ASBuilderProjectEvent.PARSE_COMPLETE, 
+				total, total));
 			return;
 		}
 		
-		dispatchEvent(new ProgressEvent(ProgressEvent.PROGRESS, false, false, count, total));
+		dispatchEvent(new ASBuilderProjectEvent(
+			ASBuilderProjectEvent.PARSE_PROGRESS, 
+			count, total));
 		
 		//trace("Parsing [" + info.sourceCode.filePath + "]");
-		addCompilationUnit(Object(info).parse());
+		
+		var unit:ICompilationUnit;
+		
+		try
+		{
+			unit = info.parse();
+			addCompilationUnit(unit);
+		}
+		catch (e:ASBlocksSyntaxError)
+		{
+			info.error = e;
+			failedInfos.push(info);
+		}
 		
 		count--;
 		
 		parseTimer = new Timer(parseDelay, 1);
-		parseTimer.addEventListener(TimerEvent.TIMER_COMPLETE, readNextAsync);
+		parseTimer.addEventListener(
+			TimerEvent.TIMER_COMPLETE, 
+			readNextAsync);
 		parseTimer.start();
 	}
 	
